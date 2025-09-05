@@ -1,5 +1,13 @@
 [![Build Status](https://travis-ci.org/Automattic/_s.svg?branch=master)](https://travis-ci.org/Automattic/_s)
 
+Inactive project
+===
+Update: September 5, 2025
+
+As we’re all-in now on Block Themes (since 2020 or so), we won’t be actively updating this _s starter theme (Underscores). This repo will be archived for reference only.
+
+To learn more about Block Themes, visit [Block Themes](https://themeshaper.com/block-themes/) and follow the resources listed there.
+
 _s
 ===
 
