@@ -26,9 +26,12 @@ get_header();
 			);
 
 			// If comments are open or we have at least one comment, load up the comment template.
+			// Uncomment if you want to enable comments on posts
+			/*
 			if ( comments_open() || get_comments_number() ) :
 				comments_template();
 			endif;
+			*/
 
 		endwhile; // End of the loop.
 		?>
@@ -36,5 +39,5 @@ get_header();
 	</main><!-- #main -->
 
 <?php
-get_sidebar();
+// get_sidebar(); // Uncomment if you want to enable sidebar
 get_footer();

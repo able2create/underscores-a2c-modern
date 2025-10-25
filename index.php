@@ -53,5 +53,5 @@ get_header();
 	</main><!-- #main -->
 
 <?php
-get_sidebar();
+// get_sidebar(); // Uncomment if you want to enable sidebar
 get_footer();
