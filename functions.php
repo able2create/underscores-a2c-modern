@@ -146,8 +146,11 @@ add_action( 'after_setup_theme', '_s_content_width', 0 );
 /**
  * Register widget area.
  *
+ * Uncomment this function if you need sidebars/widget areas.
+ *
  * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
  */
+/*
 function _s_widgets_init(): void {
 	register_sidebar(
 		array(
@@ -162,6 +165,7 @@ function _s_widgets_init(): void {
 	);
 }
 add_action( 'widgets_init', '_s_widgets_init' );
+*/
 
 /**
  * Enqueue scripts and styles.
@@ -174,7 +178,6 @@ function _s_scripts(): void {
 		array(),
 		_S_VERSION
 	);
-	wp_style_add_data( '_s-style', 'rtl', 'replace' );
 
 	// Enqueue navigation script with modern attributes
 	wp_enqueue_script(
@@ -189,9 +192,12 @@ function _s_scripts(): void {
 	);
 
 	// Enqueue comment reply script if needed
+	// Uncomment if you need threaded comments
+	/*
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
 	}
+	*/
 }
 add_action( 'wp_enqueue_scripts', '_s_scripts' );
 
@@ -214,20 +220,6 @@ require get_template_directory() . '/inc/template-functions.php';
  * Customizer additions.
  */
 require get_template_directory() . '/inc/customizer.php';
-
-/**
- * Load Jetpack compatibility file.
- */
-if ( defined( 'JETPACK__VERSION' ) ) {
-	require get_template_directory() . '/inc/jetpack.php';
-}
-
-/**
- * Load WooCommerce compatibility file.
- */
-if ( class_exists( 'WooCommerce' ) ) {
-	require get_template_directory() . '/inc/woocommerce.php';
-}
 
 /**
  * Load performance optimizations.
