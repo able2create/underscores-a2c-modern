@@ -18,14 +18,15 @@ function _s_add_security_headers(): void {
 	// Remove WordPress version from head
 	remove_action( 'wp_head', 'wp_generator' );
 
-	// Disable XML-RPC if not needed (uncomment if you don't use it)
+	// Disable XML-RPC (security risk)
 	// Note: Some plugins (like Jetpack) require XML-RPC to be enabled
-	// add_filter( 'xmlrpc_enabled', '__return_false' );
+	// Comment out the line below if you need XML-RPC
+	add_filter( 'xmlrpc_enabled', '__return_false' );
 
-	// Disable file editing in admin (uncomment for production sites)
-	// if ( ! defined( 'DISALLOW_FILE_EDIT' ) ) {
-	//     define( 'DISALLOW_FILE_EDIT', true );
-	// }
+	// Disable file editing in admin (production security)
+	if ( ! defined( 'DISALLOW_FILE_EDIT' ) ) {
+		define( 'DISALLOW_FILE_EDIT', true );
+	}
 }
 add_action( 'init', '_s_add_security_headers' );
 
