@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * _s functions and definitions
  *
@@ -9,7 +12,21 @@
 
 if ( ! defined( '_S_VERSION' ) ) {
 	// Replace the version number of the theme on each release.
-	define( '_S_VERSION', '1.0.0' );
+	define( '_S_VERSION', '2.0.0' );
+}
+
+// Require PHP 8.4+
+if ( version_compare( PHP_VERSION, '8.4.0', '<' ) ) {
+	add_action(
+		'admin_notices',
+		static function (): void {
+			printf(
+				'<div class="notice notice-error"><p>%s</p></div>',
+				esc_html__( 'This theme requires PHP 8.4 or higher. You are running PHP ' . PHP_VERSION, '_s' )
+			);
+		}
+	);
+	return;
 }
 
 /**
@@ -19,7 +36,7 @@ if ( ! defined( '_S_VERSION' ) ) {
  * runs before the init hook. The init hook is too late for some features, such
  * as indicating support for post thumbnails.
  */
-function _s_setup() {
+function _s_setup(): void {
 	/*
 		* Make theme available for translation.
 		* Translations can be filed in the /languages/ directory.
@@ -99,6 +116,18 @@ function _s_setup() {
 			'flex-height' => true,
 		)
 	);
+
+	// Add support for responsive embeds.
+	add_theme_support( 'responsive-embeds' );
+
+	// Add support for editor styles.
+	add_theme_support( 'editor-styles' );
+
+	// Add support for wide alignments.
+	add_theme_support( 'align-wide' );
+
+	// Add support for block styles.
+	add_theme_support( 'wp-block-styles' );
 }
 add_action( 'after_setup_theme', '_s_setup' );
 
@@ -109,8 +138,8 @@ add_action( 'after_setup_theme', '_s_setup' );
  *
  * @global int $content_width
  */
-function _s_content_width() {
-	$GLOBALS['content_width'] = apply_filters( '_s_content_width', 640 );
+function _s_content_width(): void {
+	$GLOBALS['content_width'] = apply_filters( '_s_content_width', 800 );
 }
 add_action( 'after_setup_theme', '_s_content_width', 0 );
 
@@ -119,7 +148,7 @@ add_action( 'after_setup_theme', '_s_content_width', 0 );
  *
  * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
  */
-function _s_widgets_init() {
+function _s_widgets_init(): void {
 	register_sidebar(
 		array(
 			'name'          => esc_html__( 'Sidebar', '_s' ),
@@ -137,12 +166,29 @@ add_action( 'widgets_init', '_s_widgets_init' );
 /**
  * Enqueue scripts and styles.
  */
-function _s_scripts() {
-	wp_enqueue_style( '_s-style', get_stylesheet_uri(), array(), _S_VERSION );
+function _s_scripts(): void {
+	// Enqueue main stylesheet
+	wp_enqueue_style(
+		'_s-style',
+		get_stylesheet_uri(),
+		array(),
+		_S_VERSION
+	);
 	wp_style_add_data( '_s-style', 'rtl', 'replace' );
 
-	wp_enqueue_script( '_s-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true );
+	// Enqueue navigation script with modern attributes
+	wp_enqueue_script(
+		'_s-navigation',
+		get_template_directory_uri() . '/js/navigation.js',
+		array(),
+		_S_VERSION,
+		array(
+			'strategy'  => 'defer',
+			'in_footer' => true,
+		)
+	);
 
+	// Enqueue comment reply script if needed
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
 	}
@@ -182,3 +228,13 @@ if ( defined( 'JETPACK__VERSION' ) ) {
 if ( class_exists( 'WooCommerce' ) ) {
 	require get_template_directory() . '/inc/woocommerce.php';
 }
+
+/**
+ * Load performance optimizations.
+ */
+require get_template_directory() . '/inc/performance.php';
+
+/**
+ * Load security enhancements.
+ */
+require get_template_directory() . '/inc/security.php';

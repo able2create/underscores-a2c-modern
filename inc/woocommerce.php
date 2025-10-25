@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * WooCommerce Compatibility File
  *
@@ -13,10 +16,8 @@
  * @link https://docs.woocommerce.com/document/third-party-custom-theme-compatibility/
  * @link https://github.com/woocommerce/woocommerce/wiki/Enabling-product-gallery-features-(zoom,-swipe,-lightbox)
  * @link https://github.com/woocommerce/woocommerce/wiki/Declaring-WooCommerce-support-in-themes
- *
- * @return void
  */
-function _s_woocommerce_setup() {
+function _s_woocommerce_setup(): void {
 	add_theme_support(
 		'woocommerce',
 		array(
@@ -39,10 +40,8 @@ add_action( 'after_setup_theme', '_s_woocommerce_setup' );
 
 /**
  * WooCommerce specific scripts & stylesheets.
- *
- * @return void
  */
-function _s_woocommerce_scripts() {
+function _s_woocommerce_scripts(): void {
 	wp_enqueue_style( '_s-woocommerce-style', get_template_directory_uri() . '/woocommerce.css', array(), _S_VERSION );
 
 	$font_path   = WC()->plugin_url() . '/assets/fonts/';
@@ -74,10 +73,10 @@ add_filter( 'woocommerce_enqueue_styles', '__return_empty_array' );
 /**
  * Add 'woocommerce-active' class to the body tag.
  *
- * @param  array $classes CSS classes applied to the body tag.
- * @return array $classes modified to include 'woocommerce-active' class.
+ * @param array<string> $classes CSS classes applied to the body tag.
+ * @return array<string> $classes modified to include 'woocommerce-active' class.
  */
-function _s_woocommerce_active_body_class( $classes ) {
+function _s_woocommerce_active_body_class( array $classes ): array {
 	$classes[] = 'woocommerce-active';
 
 	return $classes;
@@ -87,10 +86,10 @@ add_filter( 'body_class', '_s_woocommerce_active_body_class' );
 /**
  * Related Products Args.
  *
- * @param array $args related products args.
- * @return array $args related products args.
+ * @param array<string,mixed> $args related products args.
+ * @return array<string,mixed> $args related products args.
  */
-function _s_woocommerce_related_products_args( $args ) {
+function _s_woocommerce_related_products_args( array $args ): array {
 	$defaults = array(
 		'posts_per_page' => 3,
 		'columns'        => 3,
@@ -113,10 +112,8 @@ if ( ! function_exists( '_s_woocommerce_wrapper_before' ) ) {
 	 * Before Content.
 	 *
 	 * Wraps all WooCommerce content in wrappers which match the theme markup.
-	 *
-	 * @return void
 	 */
-	function _s_woocommerce_wrapper_before() {
+	function _s_woocommerce_wrapper_before(): void {
 		?>
 			<main id="primary" class="site-main">
 		<?php
@@ -129,10 +126,8 @@ if ( ! function_exists( '_s_woocommerce_wrapper_after' ) ) {
 	 * After Content.
 	 *
 	 * Closes the wrapping divs.
-	 *
-	 * @return void
 	 */
-	function _s_woocommerce_wrapper_after() {
+	function _s_woocommerce_wrapper_after(): void {
 		?>
 			</main><!-- #main -->
 		<?php
@@ -158,10 +153,10 @@ if ( ! function_exists( '_s_woocommerce_cart_link_fragment' ) ) {
 	 *
 	 * Ensure cart contents update when products are added to the cart via AJAX.
 	 *
-	 * @param array $fragments Fragments to refresh via AJAX.
-	 * @return array Fragments to refresh via AJAX.
+	 * @param array<string,string> $fragments Fragments to refresh via AJAX.
+	 * @return array<string,string> Fragments to refresh via AJAX.
 	 */
-	function _s_woocommerce_cart_link_fragment( $fragments ) {
+	function _s_woocommerce_cart_link_fragment( array $fragments ): array {
 		ob_start();
 		_s_woocommerce_cart_link();
 		$fragments['a.cart-contents'] = ob_get_clean();
@@ -176,10 +171,8 @@ if ( ! function_exists( '_s_woocommerce_cart_link' ) ) {
 	 * Cart Link.
 	 *
 	 * Displayed a link to the cart including the number of items present and the cart total.
-	 *
-	 * @return void
 	 */
-	function _s_woocommerce_cart_link() {
+	function _s_woocommerce_cart_link(): void {
 		?>
 		<a class="cart-contents" href="<?php echo esc_url( wc_get_cart_url() ); ?>" title="<?php esc_attr_e( 'View your shopping cart', '_s' ); ?>">
 			<?php
@@ -198,10 +191,8 @@ if ( ! function_exists( '_s_woocommerce_cart_link' ) ) {
 if ( ! function_exists( '_s_woocommerce_header_cart' ) ) {
 	/**
 	 * Display Header Cart.
-	 *
-	 * @return void
 	 */
-	function _s_woocommerce_header_cart() {
+	function _s_woocommerce_header_cart(): void {
 		if ( is_cart() ) {
 			$class = 'current-menu-item';
 		} else {

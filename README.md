@@ -1,78 +1,208 @@
-[![Build Status](https://travis-ci.org/Automattic/_s.svg?branch=master)](https://travis-ci.org/Automattic/_s)
-
-Inactive project
-===
-Update: September 5, 2025
-
-As we’re all-in now on Block Themes (since 2020 or so), we won’t be actively updating this _s starter theme (Underscores). This repo will be archived for reference only.
-
-To learn more about Block Themes, visit [Block Themes](https://themeshaper.com/block-themes/) and follow the resources listed there.
-
-_s
+Modernized _s Starter Theme
 ===
 
-Hi. I'm a starter theme called `_s`, or `underscores`, if you like. I'm a theme meant for hacking so don't use me as a Parent Theme. Instead try turning me into the next, most awesome, WordPress theme out there. That's what I'm here for.
+This is a **modernized fork** of the original Underscores (_s) starter theme, updated for 2025+ with:
 
-My ultra-minimal CSS might make me look like theme tartare but that means less stuff to get in your way when you're designing your awesome theme. Here are some of the other more interesting things you'll find here:
+- **PHP 8.4+** with strict types, type hints, and modern syntax
+- **theme.json V3** for modern WordPress features
+- **Modern CSS** with Custom Properties, logical properties, Container Queries, and fluid typography
+- **Modern JavaScript** (ES6+) without jQuery
+- **No build process required** - pure PHP, CSS, and JS
+- **Performance-optimized** with lazy loading, resource hints, and deferred scripts
+- **Security-hardened** with modern security headers and best practices
 
-* A modern workflow with a pre-made command-line interface to turn your project into a more pleasant experience.
-* A just right amount of lean, well-commented, modern, HTML5 templates.
-* A custom header implementation in `inc/custom-header.php`. Just add the code snippet found in the comments of `inc/custom-header.php` to your `header.php` template.
-* Custom template tags in `inc/template-tags.php` that keep your templates clean and neat and prevent code duplication.
-* Some small tweaks in `inc/template-functions.php` that can improve your theming experience.
-* A script at `js/navigation.js` that makes your menu a toggled dropdown on small screens (like your phone), ready for CSS artistry. It's enqueued in `functions.php`.
-* 2 sample layouts in `sass/layouts/` made using CSS Grid for a sidebar on either side of your content. Just uncomment the layout of your choice in `sass/style.scss`.
-Note: `.no-sidebar` styles are automatically loaded.
-* Smartly organized starter CSS in `style.css` that will help you to quickly get your design off the ground.
-* Full support for `WooCommerce plugin` integration with hooks in `inc/woocommerce.php`, styling override woocommerce.css with product gallery features (zoom, swipe, lightbox) enabled.
-* Licensed under GPLv2 or later. :) Use it to make something cool.
+What's Different in This Modern Version?
+===
+
+### 🚀 Modern PHP (8.4+)
+- Strict type declarations (`declare(strict_types=1)`)
+- Full type hints on all functions (parameters and return types)
+- Array type documentation with PHPDoc generics
+- Modern PHP features throughout
+
+### 🎨 Modern CSS (No Build Process!)
+- **CSS Custom Properties** (CSS Variables) for theming
+- **Logical properties** (margin-inline, padding-block) for RTL support
+- **Fluid typography** with `clamp()` for responsive text
+- **Container Queries** for truly responsive components
+- **Modern CSS Reset** based on current best practices
+- **Dark mode support** via `prefers-color-scheme`
+- No SASS/SCSS - pure, modern CSS that runs in all modern browsers
+
+### ⚡ Performance Optimizations
+- Lazy loading and async decoding for images
+- Deferred script loading with modern WordPress `strategy` parameter
+- Resource hints (preconnect, dns-prefetch)
+- Removed unnecessary WordPress features (emojis, etc.)
+- Query string removal from static assets
+- Optimized asset loading
+
+### 🔒 Security Hardened
+- Modern security headers (X-Frame-Options, CSP, etc.)
+- XML-RPC disabled
+- WordPress version hidden
+- Login error messages sanitized
+- Unnecessary meta tags removed
+- File editing disabled in admin
+
+### 🎯 Modern JavaScript
+- ES6+ syntax throughout
+- No jQuery dependency
+- Modern DOM APIs
+- Event delegation
+- Passive event listeners
+- Proper initialization patterns
+
+### 🎭 theme.json V3
+- Complete theme.json implementation
+- Color palettes and typography scales
+- Spacing and layout settings
+- Shadow presets
+- Block-specific settings
+- Fluid typography built-in
+
+Features
+===
+
+* Clean, semantic HTML5 templates
+* Custom header and logo support
+* Navigation menu support with keyboard and touch accessibility
+* Custom template tags for common functions
+* Performance-optimized asset loading
+* Modern responsive grid layouts using CSS Grid
+* Full WooCommerce plugin integration
+* Jetpack compatibility
+* Translation-ready with `.pot` file
+* RTL language support with logical CSS properties
+* Print stylesheet included
+* Licensed under GPLv2 or later
+
+Requirements
+---------------
+
+- **PHP 8.4+**
+- **WordPress 6.4+**
+- Composer (optional, for development tools only)
+
+No Node.js, no build process, no compilation required!
 
 Installation
 ---------------
 
-### Requirements
-
-`_s` requires the following dependencies:
-
-- [Node.js](https://nodejs.org/)
-- [Composer](https://getcomposer.org/)
-
 ### Quick Start
 
-Clone or download this repository, change its name to something else (like, say, `megatherium-is-awesome`), and then you'll need to do a six-step find and replace on the name in all the templates.
+1. Clone or download this repository into your `wp-content/themes/` directory
+2. Rename the folder to your theme name (e.g., `megatherium-is-awesome`)
+3. Do a find and replace on the following:
+   - `'_s'` → `'megatherium-is-awesome'` (text domain)
+   - `_s_` → `megatherium_is_awesome_` (function names)
+   - `Text Domain: _s` → `Text Domain: megatherium-is-awesome`
+   - <code>&nbsp;_s</code> → <code>&nbsp;Megatherium_Is_Awesome</code> (DocBlocks)
+   - `_s-` → `megatherium-is-awesome-` (handles)
+   - `_S_` → `MEGATHERIUM_IS_AWESOME_` (constants)
+4. Update the stylesheet header in `style.css` with your theme information
+5. Update or delete this README
+6. Activate the theme in WordPress
 
-1. Search for `'_s'` (inside single quotations) to capture the text domain and replace with: `'megatherium-is-awesome'`.
-2. Search for `_s_` to capture all the functions names and replace with: `megatherium_is_awesome_`.
-3. Search for `Text Domain: _s` in `style.css` and replace with: `Text Domain: megatherium-is-awesome`.
-4. Search for <code>&nbsp;_s</code> (with a space before it) to capture DocBlocks and replace with: <code>&nbsp;Megatherium_is_Awesome</code>.
-5. Search for `_s-` to capture prefixed handles and replace with: `megatherium-is-awesome-`.
-6. Search for `_S_` (in uppercase) to capture constants and replace with: `MEGATHERIUM_IS_AWESOME_`.
+### Customizing Colors and Typography
 
-Then, update the stylesheet header in `style.css`, the links in `footer.php` with your own information and rename `_s.pot` from `languages` folder to use the theme's slug. Next, update or delete this readme.
+Edit the `theme.json` file to customize:
+- Color palettes
+- Typography scales
+- Spacing values
+- Shadow presets
+- Layout settings
 
-### Setup
+CSS Custom Properties are defined in `style.css` under `:root` and can be customized there as well.
 
-To start using all the tools that come with `_s`  you need to install the necessary Node.js and Composer dependencies :
+### Development Tools (Optional)
+
+Install Composer dependencies for development tools:
 
 ```sh
-$ composer install
-$ npm install
+composer install
 ```
 
-### Available CLI commands
+Available commands:
+- `composer lint:wpcs` - Check PHP against WordPress Coding Standards
+- `composer lint:php` - Check PHP syntax
+- `composer make-pot` - Generate translation file
 
-`_s` comes packed with CLI commands tailored for WordPress theme development :
+No npm, no webpack, no build process needed!
 
-- `composer lint:wpcs` : checks all PHP files against [PHP Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/).
-- `composer lint:php` : checks all PHP files for syntax errors.
-- `composer make-pot` : generates a .pot file in the `languages/` directory.
-- `npm run compile:css` : compiles SASS files to css.
-- `npm run compile:rtl` : generates an RTL stylesheet.
-- `npm run watch` : watches all SASS files and recompiles them to css when they change.
-- `npm run lint:scss` : checks all SASS files against [CSS Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/css/).
-- `npm run lint:js` : checks all JavaScript files against [JavaScript Coding Standards](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/javascript/).
-- `npm run bundle` : generates a .zip archive for distribution, excluding development and system files.
+Browser Support
+---------------
 
-Now you're ready to go! The next step is easy to say, but harder to do: make an awesome WordPress theme. :)
+This theme uses modern CSS and JavaScript features. It supports:
+- Chrome/Edge 88+
+- Firefox 87+
+- Safari 14+
 
-Good luck!
+For older browser support, you may need to add polyfills or transpilation.
+
+RTL Support
+---------------
+
+The theme uses CSS logical properties (like `margin-inline` instead of `margin-left`) which automatically adapt to RTL languages. A minimal `style-rtl.css` file is included for edge cases.
+
+Performance
+---------------
+
+Built-in performance features:
+- Lazy loading images by default
+- Deferred JavaScript loading
+- Resource hints for external domains
+- Minimal CSS and JS (no frameworks)
+- No jQuery dependency
+- Efficient WordPress queries
+
+Security
+---------------
+
+Security features enabled by default:
+- Modern security headers
+- WordPress version hidden
+- XML-RPC disabled (can be re-enabled)
+- Login error messages sanitized
+- Unnecessary meta tags removed
+- File editing disabled in WordPress admin
+
+File Structure
+---------------
+
+```
+_s/
+├── inc/
+│   ├── custom-header.php    # Custom header implementation
+│   ├── customizer.php        # Theme customizer settings
+│   ├── template-tags.php     # Custom template tags
+│   ├── template-functions.php # Template helper functions
+│   ├── jetpack.php           # Jetpack compatibility
+│   ├── woocommerce.php       # WooCommerce compatibility
+│   ├── performance.php       # Performance optimizations
+│   └── security.php          # Security enhancements
+├── js/
+│   ├── navigation.js         # Mobile navigation
+│   └── customizer.js         # Customizer preview JS
+├── template-parts/           # Template part files
+├── functions.php             # Theme functions
+├── style.css                 # Main stylesheet
+├── style-rtl.css             # RTL overrides
+├── theme.json                # Theme configuration (V3)
+├── *.php                     # Template files
+└── README.md                 # This file
+```
+
+Contributing
+---------------
+
+This is a modernized fork. For the original Underscores project, visit [underscores.me](https://underscores.me).
+
+License
+---------------
+
+This theme, like WordPress, is licensed under the GPL v2 or later.
+
+Use it to make something cool, have fun, and share what you've learned.
+
+_s is based on Underscores https://underscores.me/, (C) 2012-2025 Automattic, Inc.

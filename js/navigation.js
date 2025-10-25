@@ -3,8 +3,16 @@
  *
  * Handles toggling the navigation menu for small screens and enables TAB key
  * navigation support for dropdown menus.
+ *
+ * @package _s
  */
-( function() {
+
+'use strict';
+
+/**
+ * Initialize navigation
+ */
+function initNavigation() {
 	const siteNavigation = document.getElementById( 'site-navigation' );
 
 	// Return early if the navigation doesn't exist.
@@ -12,88 +20,104 @@
 		return;
 	}
 
-	const button = siteNavigation.getElementsByTagName( 'button' )[ 0 ];
+	const button = siteNavigation.querySelector( 'button' );
 
 	// Return early if the button doesn't exist.
-	if ( 'undefined' === typeof button ) {
+	if ( ! button ) {
 		return;
 	}
 
-	const menu = siteNavigation.getElementsByTagName( 'ul' )[ 0 ];
+	const menu = siteNavigation.querySelector( 'ul' );
 
 	// Hide menu toggle button if menu is empty and return early.
-	if ( 'undefined' === typeof menu ) {
+	if ( ! menu ) {
 		button.style.display = 'none';
 		return;
 	}
 
-	if ( ! menu.classList.contains( 'nav-menu' ) ) {
-		menu.classList.add( 'nav-menu' );
-	}
+	// Add nav-menu class if not present
+	menu.classList.add( 'nav-menu' );
 
-	// Toggle the .toggled class and the aria-expanded value each time the button is clicked.
-	button.addEventListener( 'click', function() {
+	// Toggle menu on button click
+	button.addEventListener( 'click', () => {
+		const isExpanded = button.getAttribute( 'aria-expanded' ) === 'true';
 		siteNavigation.classList.toggle( 'toggled' );
-
-		if ( button.getAttribute( 'aria-expanded' ) === 'true' ) {
-			button.setAttribute( 'aria-expanded', 'false' );
-		} else {
-			button.setAttribute( 'aria-expanded', 'true' );
-		}
+		button.setAttribute( 'aria-expanded', String( ! isExpanded ) );
 	} );
 
-	// Remove the .toggled class and set aria-expanded to false when the user clicks outside the navigation.
-	document.addEventListener( 'click', function( event ) {
-		const isClickInside = siteNavigation.contains( event.target );
-
-		if ( ! isClickInside ) {
+	// Close menu when clicking outside
+	document.addEventListener( 'click', ( event ) => {
+		if ( ! siteNavigation.contains( event.target ) ) {
 			siteNavigation.classList.remove( 'toggled' );
 			button.setAttribute( 'aria-expanded', 'false' );
 		}
 	} );
 
-	// Get all the link elements within the menu.
-	const links = menu.getElementsByTagName( 'a' );
-
-	// Get all the link elements with children within the menu.
+	// Handle keyboard navigation
+	const links = menu.querySelectorAll( 'a' );
 	const linksWithChildren = menu.querySelectorAll( '.menu-item-has-children > a, .page_item_has_children > a' );
 
-	// Toggle focus each time a menu link is focused or blurred.
-	for ( const link of links ) {
-		link.addEventListener( 'focus', toggleFocus, true );
-		link.addEventListener( 'blur', toggleFocus, true );
-	}
+	// Add focus/blur handlers for keyboard navigation
+	links.forEach( ( link ) => {
+		link.addEventListener( 'focus', handleFocus, true );
+		link.addEventListener( 'blur', handleFocus, true );
+	} );
 
-	// Toggle focus each time a menu link with children receive a touch event.
-	for ( const link of linksWithChildren ) {
-		link.addEventListener( 'touchstart', toggleFocus, false );
+	// Add touch handlers for mobile
+	linksWithChildren.forEach( ( link ) => {
+		link.addEventListener( 'touchstart', handleTouch, { passive: false } );
+	} );
+
+	/**
+	 * Handle focus events for keyboard navigation
+	 *
+	 * @param {Event} event - The focus or blur event
+	 */
+	function handleFocus( event ) {
+		if ( event.type !== 'focus' && event.type !== 'blur' ) {
+			return;
+		}
+
+		let element = event.target;
+
+		// Move up through ancestors until we hit .nav-menu
+		while ( element && ! element.classList.contains( 'nav-menu' ) ) {
+			if ( element.tagName === 'LI' ) {
+				element.classList.toggle( 'focus' );
+			}
+			element = element.parentElement;
+		}
 	}
 
 	/**
-	 * Sets or removes .focus class on an element.
+	 * Handle touch events for mobile navigation
+	 *
+	 * @param {Event} event - The touchstart event
 	 */
-	function toggleFocus() {
-		if ( event.type === 'focus' || event.type === 'blur' ) {
-			let self = this;
-			// Move up through the ancestors of the current link until we hit .nav-menu.
-			while ( ! self.classList.contains( 'nav-menu' ) ) {
-				// On li elements toggle the class .focus.
-				if ( 'li' === self.tagName.toLowerCase() ) {
-					self.classList.toggle( 'focus' );
-				}
-				self = self.parentNode;
-			}
+	function handleTouch( event ) {
+		const menuItem = event.target.parentElement;
+
+		if ( ! menuItem ) {
+			return;
 		}
 
-		if ( event.type === 'touchstart' ) {
-			const menuItem = this.parentNode;
-			event.preventDefault();
-			for ( const link of menuItem.parentNode.children ) {
-				if ( menuItem !== link ) {
-					link.classList.remove( 'focus' );
-				}
+		event.preventDefault();
+
+		// Remove focus from siblings
+		Array.from( menuItem.parentElement.children ).forEach( ( sibling ) => {
+			if ( sibling !== menuItem ) {
+				sibling.classList.remove( 'focus' );
 			}
-			menuItem.classList.toggle( 'focus' );
-		}
+		} );
+
+		// Toggle focus on current item
+		menuItem.classList.toggle( 'focus' );
 	}
-}() );
+}
+
+// Initialize when DOM is ready
+if ( document.readyState === 'loading' ) {
+	document.addEventListener( 'DOMContentLoaded', initNavigation );
+} else {
+	initNavigation();
+}

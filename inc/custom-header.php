@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Sample implementation of the Custom Header feature
  *
@@ -16,7 +19,7 @@
  *
  * @uses _s_header_style()
  */
-function _s_custom_header_setup() {
+function _s_custom_header_setup(): void {
 	add_theme_support(
 		'custom-header',
 		apply_filters(
@@ -40,7 +43,7 @@ if ( ! function_exists( '_s_header_style' ) ) :
 	 *
 	 * @see _s_custom_header_setup().
 	 */
-	function _s_header_style() {
+	function _s_header_style(): void {
 		$header_text_color = get_header_textcolor();
 
 		/*

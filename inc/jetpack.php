@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Jetpack Compatibility File
  *
@@ -14,7 +17,7 @@
  * See: https://jetpack.com/support/responsive-videos/
  * See: https://jetpack.com/support/content-options/
  */
-function _s_jetpack_setup() {
+function _s_jetpack_setup(): void {
 	// Add theme support for Infinite Scroll.
 	add_theme_support(
 		'infinite-scroll',
@@ -54,7 +57,7 @@ if ( ! function_exists( '_s_infinite_scroll_render' ) ) :
 	/**
 	 * Custom render function for Infinite Scroll.
 	 */
-	function _s_infinite_scroll_render() {
+	function _s_infinite_scroll_render(): void {
 		while ( have_posts() ) {
 			the_post();
 			if ( is_search() ) :
