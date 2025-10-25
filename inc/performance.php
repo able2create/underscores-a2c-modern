@@ -25,10 +25,9 @@ function _s_add_lazy_loading( array $attr ): array {
 add_filter( 'wp_get_attachment_image_attributes', '_s_add_lazy_loading' );
 
 /**
- * Disable emoji script (uncomment if you don't need emoji support)
+ * Disable emoji script
  * Note: Most modern browsers have native emoji support
  */
-/*
 function _s_disable_emojis(): void {
 	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 	remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
@@ -39,7 +38,6 @@ function _s_disable_emojis(): void {
 	remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
 }
 add_action( 'init', '_s_disable_emojis' );
-*/
 
 /**
  * Remove query strings from static resources (uncomment if needed)
