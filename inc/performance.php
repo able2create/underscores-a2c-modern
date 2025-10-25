@@ -5,6 +5,9 @@ declare(strict_types=1);
 /**
  * Performance optimizations
  *
+ * Most features are commented out by default for maximum plugin compatibility.
+ * Uncomment the features you need.
+ *
  * @package _s
  */
 
@@ -22,8 +25,10 @@ function _s_add_lazy_loading( array $attr ): array {
 add_filter( 'wp_get_attachment_image_attributes', '_s_add_lazy_loading' );
 
 /**
- * Disable emoji script
+ * Disable emoji script (uncomment if you don't need emoji support)
+ * Note: Most modern browsers have native emoji support
  */
+/*
 function _s_disable_emojis(): void {
 	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 	remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
@@ -34,13 +39,13 @@ function _s_disable_emojis(): void {
 	remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
 }
 add_action( 'init', '_s_disable_emojis' );
+*/
 
 /**
- * Remove query strings from static resources
- *
- * @param string $src Source URL.
- * @return string
+ * Remove query strings from static resources (uncomment if needed)
+ * Note: Some caching plugins handle this better
  */
+/*
 function _s_remove_query_strings( string $src ): string {
 	if ( str_contains( $src, '?ver=' ) ) {
 		$src = remove_query_arg( 'ver', $src );
@@ -49,10 +54,13 @@ function _s_remove_query_strings( string $src ): string {
 }
 add_filter( 'script_loader_src', '_s_remove_query_strings', 15 );
 add_filter( 'style_loader_src', '_s_remove_query_strings', 15 );
+*/
 
 /**
- * Add preconnect for external domains
+ * Add preconnect for external domains (uncomment and customize as needed)
+ * Add your external domains here (fonts, CDNs, etc.)
  */
+/*
 function _s_add_resource_hints(): void {
 	?>
 	<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
@@ -60,14 +68,16 @@ function _s_add_resource_hints(): void {
 	<?php
 }
 add_action( 'wp_head', '_s_add_resource_hints', 1 );
+*/
 
 /**
- * Defer non-critical CSS
+ * Defer non-critical CSS (uncomment if needed)
  *
  * @param string $html HTML tag.
  * @param string $handle Style handle.
  * @return string
  */
+/*
 function _s_defer_non_critical_css( string $html, string $handle ): string {
 	// Add handles that should be deferred
 	$defer_styles = array();
@@ -79,20 +89,20 @@ function _s_defer_non_critical_css( string $html, string $handle ): string {
 	return $html;
 }
 add_filter( 'style_loader_tag', '_s_defer_non_critical_css', 10, 2 );
+*/
 
 /**
- * Add async/defer attributes to scripts
+ * Add async/defer attributes to scripts (uncomment if needed)
+ * Note: WordPress 6.3+ handles this via 'strategy' parameter in wp_enqueue_script
  *
  * @param string $tag Script tag.
  * @param string $handle Script handle.
  * @return string
  */
+/*
 function _s_add_async_defer_attributes( string $tag, string $handle ): string {
 	// Scripts that should be async
 	$async_scripts = array();
-
-	// Scripts that should be deferred (already handled by wp_enqueue_script strategy param)
-	$defer_scripts = array();
 
 	if ( in_array( $handle, $async_scripts, true ) && ! is_admin() ) {
 		return str_replace( ' src', ' async src', $tag );
@@ -101,3 +111,4 @@ function _s_add_async_defer_attributes( string $tag, string $handle ): string {
 	return $tag;
 }
 add_filter( 'script_loader_tag', '_s_add_async_defer_attributes', 10, 2 );
+*/

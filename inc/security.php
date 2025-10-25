@@ -5,28 +5,35 @@ declare(strict_types=1);
 /**
  * Security enhancements
  *
+ * Conservative security settings by default to ensure plugin compatibility.
+ * Uncomment additional hardening features as needed.
+ *
  * @package _s
  */
 
 /**
- * Add security headers
+ * Basic security improvements (always active)
  */
 function _s_add_security_headers(): void {
 	// Remove WordPress version from head
 	remove_action( 'wp_head', 'wp_generator' );
 
-	// Disable XML-RPC if not needed
-	add_filter( 'xmlrpc_enabled', '__return_false' );
+	// Disable XML-RPC if not needed (uncomment if you don't use it)
+	// Note: Some plugins (like Jetpack) require XML-RPC to be enabled
+	// add_filter( 'xmlrpc_enabled', '__return_false' );
 
-	// Disable file editing in admin
-	if ( ! defined( 'DISALLOW_FILE_EDIT' ) ) {
-		define( 'DISALLOW_FILE_EDIT', true );
-	}
+	// Disable file editing in admin (uncomment for production sites)
+	// if ( ! defined( 'DISALLOW_FILE_EDIT' ) ) {
+	//     define( 'DISALLOW_FILE_EDIT', true );
+	// }
 }
 add_action( 'init', '_s_add_security_headers' );
 
 /**
  * Send security headers
+ *
+ * Note: These headers are generally safe but some plugins might not work with them.
+ * Adjust as needed for your use case.
  */
 function _s_send_security_headers(): void {
 	// Only send headers if not in admin
@@ -34,11 +41,18 @@ function _s_send_security_headers(): void {
 		return;
 	}
 
+	// Safe headers that should work with all plugins
 	header( 'X-Content-Type-Options: nosniff' );
 	header( 'X-Frame-Options: SAMEORIGIN' );
-	header( 'X-XSS-Protection: 1; mode=block' );
 	header( 'Referrer-Policy: strict-origin-when-cross-origin' );
-	header( 'Permissions-Policy: geolocation=(), microphone=(), camera=()' );
+
+	// Optional headers (uncomment if needed)
+	// Note: X-XSS-Protection is deprecated in modern browsers
+	// header( 'X-XSS-Protection: 1; mode=block' );
+
+	// Permissions-Policy might interfere with some plugins (Google Maps, etc.)
+	// Adjust the directives based on your needs
+	// header( 'Permissions-Policy: geolocation=(), microphone=(), camera=()' );
 }
 add_action( 'send_headers', '_s_send_security_headers' );
 
