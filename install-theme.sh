@@ -1,126 +1,88 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Modern _s Theme Installation Script
-# Usage: ./install-theme.sh <theme-slug> "<Theme Name>" "<Author>" "<Author URI>"
-# Example: ./install-theme.sh sundp "a2c - Theme" "Martin" "https://able2create.com"
+# Usage: ./install-theme.sh <slug> "<Theme Name>" "<Author>" "<Author URI>" [-y]
+SLUG="${1:?need slug}"
+THEME_NAME="${2:?need theme name}"
+AUTHOR="${3:?need author}"
+AUTHOR_URI="${4:?need author uri}"
+AUTO="${5:-}"
 
-set -e
+SLUG_UNDER="${SLUG//-/_}"
+SLUG_UPPER="$(printf '%s' "$SLUG_UNDER" | tr '[:lower:]' '[:upper:]')"
 
-# Check if required arguments are provided
-if [ "$#" -lt 4 ]; then
-    echo "Usage: $0 <theme-slug> \"<Theme Name>\" \"<Author>\" \"<Author URI>\""
-    echo "Example: $0 sundp \"a2c - Theme\" \"Martin\" \"https://able2create.com\""
-    exit 1
+# Theme-Ziel
+if [ -n "${WP_THEMES_DIR:-}" ]; then
+  TARGET_DIR="$WP_THEMES_DIR/$SLUG"
+elif [ -d "wp-content/themes" ]; then
+  TARGET_DIR="wp-content/themes/$SLUG"
+else
+  echo "WordPress nicht gefunden. Im WP-Root ausführen oder WP_THEMES_DIR setzen."
+  exit 1
 fi
 
-THEME_SLUG="$1"
-THEME_NAME="$2"
-AUTHOR="$3"
-AUTHOR_URI="$4"
-
-# Derived variables
-THEME_SLUG_UPPER=$(echo "$THEME_SLUG" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
-THEME_SLUG_UNDER=$(echo "$THEME_SLUG" | tr '-' '_')
-THEME_NAME_SAFE=$(echo "$THEME_NAME" | sed 's/ /_/g')
-
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  Modern _s Theme Installation"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
-echo "Theme Slug:    $THEME_SLUG"
-echo "Theme Name:    $THEME_NAME"
-echo "Author:        $AUTHOR"
-echo "Author URI:    $AUTHOR_URI"
-echo ""
-
-# Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Target directory (WordPress themes directory)
-if [ -n "$WP_THEMES_DIR" ]; then
-    TARGET_DIR="$WP_THEMES_DIR/$THEME_SLUG"
-else
-    # Try to auto-detect WordPress installation
-    if [ -d "wp-content/themes" ]; then
-        TARGET_DIR="wp-content/themes/$THEME_SLUG"
-    else
-        echo "Error: Could not find WordPress installation."
-        echo "Please set WP_THEMES_DIR environment variable or run from WordPress root."
-        exit 1
-    fi
+echo "Target: $TARGET_DIR"
+if [ "$AUTO" != "-y" ]; then
+  read -p "Continue? (y/n) " -n 1 -r; echo
+  [[ $REPLY =~ ^[Yy]$ ]] || { echo "Cancelled."; exit 1; }
 fi
 
-echo "Target:        $TARGET_DIR"
-echo ""
-read -p "Continue? (y/n) " -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "Installation cancelled."
-    exit 1
-fi
-
-echo ""
-echo "Creating theme directory..."
 mkdir -p "$TARGET_DIR"
 
-echo "Copying theme files..."
-rsync -av --exclude='.git' --exclude='install-theme.sh' --exclude='README.md' --exclude='.gitignore' "$SCRIPT_DIR/" "$TARGET_DIR/"
+# Dateien kopieren, aber Ballast weglassen
+rsync -a \
+  --exclude='.git' --exclude='.github' \
+  --exclude='node_modules' --exclude='vendor' \
+  --exclude='install-theme.sh' --exclude='README.md' \
+  --exclude='.gitignore' --exclude='.DS_Store' \
+  "$SCRIPT_DIR/” "$TARGET_DIR/"
 
-echo "Performing find and replace..."
+# Portable sed -i
+sedi() { sed -i.bak "$@"; rm -f "${@: -1}.bak"; }
 
-# Function to perform replacements in a file
-replace_in_file() {
-    local file="$1"
-    
-    # Text domain
-    sed -i "s/'_s'/'$THEME_SLUG'/g" "$file"
-    
-    # Function names
-    sed -i "s/_s_/${THEME_SLUG_UNDER}_/g" "$file"
-    
-    # Text Domain in style.css
-    sed -i "s/Text Domain: _s/Text Domain: $THEME_SLUG/g" "$file"
-    
-    # DocBlocks
-    sed -i "s/ _s/ $THEME_NAME_SAFE/g" "$file"
-    
-    # Handles
-    sed -i "s/_s-/${THEME_SLUG}-/g" "$file"
-    
-    # Constants
-    sed -i "s/_S_/${THEME_SLUG_UPPER}_/g" "$file"
-    
-    # Package name
-    sed -i "s/@package _s/@package $THEME_SLUG/g" "$file"
-}
-
-# Find all PHP, CSS, and JS files and replace
-find "$TARGET_DIR" -type f \( -name "*.php" -o -name "*.css" -o -name "*.js" -o -name "*.json" \) | while read file; do
-    replace_in_file "$file"
-done
-
-# Update style.css header
-sed -i "s/Theme Name: _s/Theme Name: $THEME_NAME/g" "$TARGET_DIR/style.css"
-sed -i "s/Author: Automattic/Author: $AUTHOR/g" "$TARGET_DIR/style.css"
-sed -i "s|Author URI: https://automattic.com/|Author URI: $AUTHOR_URI|g" "$TARGET_DIR/style.css"
-
-# Rename the .pot file
-if [ -f "$TARGET_DIR/languages/_s.pot" ]; then
-    mv "$TARGET_DIR/languages/_s.pot" "$TARGET_DIR/languages/$THEME_SLUG.pot"
+# style.css Header hart setzen
+if [ -f "$TARGET_DIR/style.css" ]; then
+  sedi "s/^Theme Name: .*/Theme Name: ${THEME_NAME}/" "$TARGET_DIR/style.css"
+  sedi "s/^Author: .*/Author: ${AUTHOR}/" "$TARGET_DIR/style.css"
+  sedi "s|^Author URI: .*|Author URI: ${AUTHOR_URI}|" "$TARGET_DIR/style.css"
+  # Text Domain setzen oder hinzufügen
+  grep -q "^Text Domain:" "$TARGET_DIR/style.css" \
+    && sedi "s/^Text Domain: .*/Text Domain: ${SLUG}/" "$TARGET_DIR/style.css" \
+    || printf "Text Domain: %s\n" "$SLUG" >> "$TARGET_DIR/style.css"
 fi
 
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  ✓ Installation Complete!"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
-echo "Theme installed at: $TARGET_DIR"
-echo ""
-echo "Next steps:"
-echo "1. Activate the theme in WordPress admin"
-echo "2. Customize colors/typography in theme.json"
-echo "3. Edit CSS variables in style.css"
-echo ""
-echo "To activate via WP-CLI:"
-echo "  wp theme activate $THEME_SLUG"
-echo ""
+# Ersetzungen mit Boundaries, ohne .git/node_modules/vendor
+while IFS= read -r -d '' f; do
+  # Textdomain '_s' nur in Quotes
+  perl -0777 -pe "s/'_s'/'${SLUG}'/g; s/\"_s\"/\"${SLUG}\"/g;" -i "$f"
+  # Funktionspräfixe
+  perl -0777 -pe "s/\\b_s_\\b/${SLUG_UNDER}_/g; s/\\b_S_\\b/${SLUG_UPPER}_/g;" -i "$f"
+  # Handle-Namen
+  perl -0777 -pe "s/\\b_s-/${SLUG}-/g;" -i "$f"
+  # Paketname in Docblocks
+  perl -0777 -pe "s/@package\\s+_s/@package ${SLUG}/g;" -i "$f"
+done < <(find "$TARGET_DIR" -type f \
+  \( -name "*.php" -o -name "*.css" -o -name "*.js" -o -name "*.json" -o -name "*.pot" \) \
+  -not -path "*/.git/*" -not -path "*/node_modules/*" -not -path "*/vendor/*" -print0)
+
+# languages umbenennen
+if [ -f "$TARGET_DIR/languages/_s.pot" ]; then
+  mv "$TARGET_DIR/languages/_s.pot" "$TARGET_DIR/languages/${SLUG}.pot"
+fi
+mkdir -p "$TARGET_DIR/languages"
+
+# Textdomain laden absichern
+if [ -f "$TARGET_DIR/functions.php" ] && ! grep -q "load_theme_textdomain" "$TARGET_DIR/functions.php"; then
+  awk -v s="$SLUG" 'NR==1{print "<?php\nadd_action('\''after_setup_theme'\'', function(){load_theme_textdomain('\''"s"'\'', get_template_directory().'\''/languages'\'');});\n"}1' \
+    "$TARGET_DIR/functions.php" > "$TARGET_DIR/functions.php.tmp" && mv "$TARGET_DIR/functions.php.tmp" "$TARGET_DIR/functions.php"
+fi
+
+# Theme aktivieren, wenn wp-cli verfügbar
+if command -v wp >/dev/null 2>&1; then
+  wp theme activate "$SLUG" || true
+fi
+
+echo "Done → $TARGET_DIR"
+echo "Slug=${SLUG}, Prefix=${SLUG_UNDER}_, Const=${SLUG_UPPER}_"
