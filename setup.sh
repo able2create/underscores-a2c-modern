@@ -106,6 +106,40 @@ echo "  ✓ Setup Complete!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
+# Ask about cleanup
+echo "Clean up development files?"
+echo "(Removes: .git, .github, .gitignore, composer.json, README files, etc.)"
+echo ""
+read -p "Clean up? (y/n) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo ""
+    echo "Cleaning up development files..."
+
+    # Remove Git
+    rm -rf "$THEME_DIR/.git"
+    rm -rf "$THEME_DIR/.github"
+    rm -f "$THEME_DIR/.gitignore"
+
+    # Remove documentation
+    rm -f "$THEME_DIR/README.md"
+    rm -f "$THEME_DIR/readme.txt"
+    rm -f "$THEME_DIR/INSTALL.md"
+    rm -f "$THEME_DIR/SCHNELLSTART.md"
+    rm -f "$THEME_DIR/LICENSE"
+
+    # Remove development files
+    rm -f "$THEME_DIR/composer.json"
+    rm -f "$THEME_DIR/phpcs.xml.dist"
+    rm -f "$THEME_DIR/install-theme.sh"
+
+    # Remove this script
+    rm -f "$THEME_DIR/setup.sh"
+
+    echo "✓ Cleanup complete!"
+    echo ""
+fi
+
 if [ "$CURRENT_DIR" != "$THEME_SLUG" ]; then
     echo "IMPORTANT: Rename this directory from '$CURRENT_DIR' to '$THEME_SLUG'"
     echo ""

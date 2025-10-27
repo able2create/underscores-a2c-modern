@@ -14,6 +14,11 @@ cd _s
 ./setup.sh sundp "a2c - Theme" "Martin" "https://able2create.com"
 ```
 
+Das Script fragt am Ende:
+- **Clean up development files?** → `y` eingeben
+- Entfernt automatisch: .git, .github, README, composer.json, etc.
+- Nur Theme-Dateien bleiben übrig (keine Git-History, keine gelben Markierungen in VSCode)
+
 ### Schritt 3: Verzeichnis umbenennen
 ```bash
 cd ..
