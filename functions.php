@@ -179,18 +179,6 @@ function _s_scripts(): void {
 		_S_VERSION
 	);
 
-	// Enqueue navigation script with modern attributes
-	wp_enqueue_script(
-		'_s-navigation',
-		get_template_directory_uri() . '/js/navigation.js',
-		array(),
-		_S_VERSION,
-		array(
-			'strategy'  => 'defer',
-			'in_footer' => true,
-		)
-	);
-
 	// Enqueue comment reply script if needed
 	// Uncomment if you need threaded comments
 	/*

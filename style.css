@@ -279,32 +279,6 @@ textarea {
 	text-decoration: none;
 }
 
-.menu-toggle {
-	display: none;
-}
-
-@media (max-width: 768px) {
-	.menu-toggle {
-		display: block;
-		background: transparent;
-		border: 2px solid var(--color-border);
-		padding: 8px 16px;
-	}
-
-	.main-navigation ul {
-		display: none;
-	}
-
-	.main-navigation.toggled ul {
-		display: block;
-	}
-
-	.main-navigation li {
-		display: block;
-		margin: 0;
-	}
-}
-
 /*--------------------------------------------------------------
 # Posts
 --------------------------------------------------------------*/
