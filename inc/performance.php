@@ -3,15 +3,6 @@
 declare(strict_types=1);
 
 /**
- * Performance optimizations
- *
- * Most features are commented out by default for maximum plugin compatibility.
- * Uncomment the features you need.
- *
- * @package _s
- */
-
-/**
  * Add lazy loading to post thumbnails
  *
  * @param array<string,string> $attr Image attributes.

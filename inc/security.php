@@ -3,15 +3,6 @@
 declare(strict_types=1);
 
 /**
- * Security enhancements
- *
- * Conservative security settings by default to ensure plugin compatibility.
- * Uncomment additional hardening features as needed.
- *
- * @package _s
- */
-
-/**
  * Basic security improvements (always active)
  */
 function _s_add_security_headers(): void {
