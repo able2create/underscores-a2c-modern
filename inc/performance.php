@@ -104,14 +104,20 @@ add_filter( 'script_loader_tag', '_s_add_async_defer_attributes', 10, 2 );
 
 /**
  * Remove unnecessary head links
- * Removes feed links for cleaner HTML
+ * Removes feed links and REST API discovery for cleaner HTML
  */
 function _s_cleanup_head(): void {
 	// Remove feed links
 	remove_action( 'wp_head', 'feed_links', 2 );
 	remove_action( 'wp_head', 'feed_links_extra', 3 );
 
+	// Remove REST API link
+	remove_action( 'wp_head', 'rest_output_link_wp_head' );
+
 	// Remove oEmbed discovery links
 	remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
+
+	// Remove REST API link in HTTP headers
+	remove_action( 'template_redirect', 'rest_output_link_header', 11 );
 }
 add_action( 'init', '_s_cleanup_head' );
