@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 if ( ! function_exists( '_s_posted_on' ) ) :
 	/**
 	 * Prints HTML with meta information for the current post-date/time.
