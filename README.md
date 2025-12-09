@@ -3,50 +3,41 @@ Modernized _s Starter Theme
 
 This is a **modernized fork** of the original Underscores (_s) starter theme, updated for 2025+ with:
 
-- **PHP 8.4+** with strict types, type hints, and modern syntax
-- **theme.json V3** for modern WordPress features
-- **Modern CSS** with Custom Properties, logical properties, Container Queries, and fluid typography
+- **PHP 8.4+** with type hints and modern syntax
+- **WordPress 6.9** with theme.json V3 for modern features
+- **Modern CSS** - pure CSS with Custom Properties, no build process
 - **Modern JavaScript** (ES6+) without jQuery
 - **No build process required** - pure PHP, CSS, and JS
-- **Performance-optimized** with lazy loading, resource hints, and deferred scripts
-- **Security-hardened** (but plugin-friendly!) with modern security headers
+- **Performance-optimized** - Emoji disabled, lazy loading enabled
+- **Security-hardened** - XML-RPC disabled, file editing disabled
 - **Easy installation** with included script - no manual find/replace needed
 
 What's Different in This Modern Version?
 ===
 
 ### 🚀 Modern PHP (8.4+)
-- Strict type declarations (`declare(strict_types=1)`)
 - Full type hints on all functions (parameters and return types)
 - Array type documentation with PHPDoc generics
 - Modern PHP features throughout
 
 ### 🎨 Modern CSS (No Build Process!)
 - **CSS Custom Properties** (CSS Variables) for theming
-- **Logical properties** (margin-inline, padding-block) for RTL support
-- **Fluid typography** with `clamp()` for responsive text
-- **Container Queries** for truly responsive components
 - **Modern CSS Reset** based on current best practices
-- **Dark mode support** via `prefers-color-scheme`
 - No SASS/SCSS - pure, modern CSS that runs in all modern browsers
 
 ### ⚡ Performance Optimizations
 - Lazy loading and async decoding for images
-- Deferred script loading with modern WordPress `strategy` parameter
-- Resource hints (preconnect, dns-prefetch)
-- Removed unnecessary WordPress features (emojis, etc.)
-- Query string removal from static assets
+- **Emoji support disabled** for better performance
+- Feed links removed from head
 - Optimized asset loading
 
-### 🔒 Security Hardened (But Plugin-Friendly!)
-- Modern security headers (configurable)
+### 🔒 Security Hardened
+- Modern security headers
+- **XML-RPC disabled** (security risk - comment out if needed by plugins like Jetpack)
+- **File editing disabled** (production security - comment out if needed)
 - WordPress version hidden
 - Login error messages sanitized
 - Unnecessary meta tags removed
-- Optional features (commented out by default):
-  - XML-RPC disable (some plugins need it)
-  - File editing disable (enable for production)
-  - Additional permission policies
 
 ### 🎯 Modern JavaScript
 - ES6+ syntax throughout
