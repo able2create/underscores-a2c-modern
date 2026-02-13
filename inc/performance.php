@@ -105,12 +105,12 @@ function _s_add_speculation_rules(): void {
 		),
 	);
 
-	printf(
-		'<script type="speculationrules">%s</script>' . "\n",
-		wp_json_encode( $speculation_rules, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG )
-	);
+	$json = wp_json_encode( $speculation_rules, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG );
+	if ( $json ) {
+		echo '<script type="speculationrules">' . $json . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
 }
-add_action( 'wp_footer', '_s_add_speculation_rules', 99 );
+add_action( 'wp_print_footer_scripts', '_s_add_speculation_rules', 99 );
 
 /**
  * Remove query strings from static resources (uncomment if needed)
@@ -167,15 +167,19 @@ function _s_cleanup_head(): void {
 add_action( 'init', '_s_cleanup_head' );
 
 /**
- * Optimize WP 6.9+ block styles for classic themes
+ * Optimize WP 6.9+ block styles for classic themes (disabled)
  *
  * WP 6.9 introduces on-demand CSS loading for classic themes via
- * the template enhancement output buffer. This can reduce page CSS by 30-65%.
- * Enable this filter to opt in explicitly.
+ * the template enhancement output buffer. Can reduce page CSS by 30-65%.
+ *
+ * Currently disabled: triggers WP_HTML_Tag_Processor errors in WP 6.9.1
+ * when combined with custom wp_head output. Re-enable after WP 7.0.
  *
  * @since 2.2.0
  */
+/*
 function _s_enable_template_enhancement_buffer(): bool {
 	return true;
 }
 add_filter( 'wp_template_enhancement_output_buffer', '_s_enable_template_enhancement_buffer' );
+*/
