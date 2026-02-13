@@ -251,6 +251,12 @@
 				"color": {
 					"text": true,
 					"background": true
+				},
+				"typography": {
+					"fontStyle": true,
+					"fontWeight": true,
+					"letterSpacing": true,
+					"textTransform": true
 				}
 			},
 			"core/heading": {
@@ -284,6 +290,32 @@
 							}
 						}
 					]
+				}
+			},
+			"core/accordion": {
+				"color": {
+					"text": true,
+					"background": true
+				},
+				"border": {
+					"color": true,
+					"radius": true,
+					"style": true,
+					"width": true
+				},
+				"spacing": {
+					"padding": true,
+					"margin": true
+				},
+				"typography": {
+					"fontSizes": true,
+					"fontWeight": true
+				}
+			},
+			"core/separator": {
+				"color": {
+					"text": true,
+					"background": true
 				}
 			}
 		}
@@ -332,6 +364,9 @@
 				"color": {
 					"background": "var(--wp--preset--color--primary)",
 					"text": "var(--wp--preset--color--base)"
+				},
+				"typography": {
+					"fontWeight": "600"
 				},
 				"border": {
 					"radius": "0.25rem"
@@ -420,6 +455,10 @@
 					"background": "var(--wp--preset--color--base)",
 					"text": "var(--wp--preset--color--secondary)"
 				},
+				"typography": {
+					"fontFamily": "inherit",
+					"fontSize": "var(--wp--preset--font-size--medium)"
+				},
 				"border": {
 					"color": "var(--wp--preset--color--border)",
 					"width": "1px",
@@ -450,6 +489,10 @@
 				"color": {
 					"background": "var(--wp--preset--color--base)",
 					"text": "var(--wp--preset--color--secondary)"
+				},
+				"typography": {
+					"fontFamily": "inherit",
+					"fontSize": "var(--wp--preset--font-size--medium)"
 				},
 				"border": {
 					"color": "var(--wp--preset--color--border)",
@@ -487,6 +530,32 @@
 			"core/post-content": {
 				"spacing": {
 					"blockGap": "var(--wp--preset--spacing--m)"
+				}
+			},
+			"core/accordion": {
+				"border": {
+					"color": "var(--wp--preset--color--border)",
+					"width": "1px",
+					"style": "solid",
+					"radius": "0.25rem"
+				},
+				"spacing": {
+					"padding": {
+						"top": "var(--wp--preset--spacing--s)",
+						"right": "var(--wp--preset--spacing--s)",
+						"bottom": "var(--wp--preset--spacing--s)",
+						"left": "var(--wp--preset--spacing--s)"
+					}
+				}
+			},
+			"core/separator": {
+				"color": {
+					"text": "var(--wp--preset--color--border)"
+				},
+				"border": {
+					"color": "var(--wp--preset--color--border)",
+					"width": "1px",
+					"style": "solid"
 				}
 			}
 		}

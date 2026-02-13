@@ -11,8 +11,7 @@ declare(strict_types=1);
  */
 
 if ( ! defined( '_S_VERSION' ) ) {
-	// Replace the version number of the theme on each release.
-	define( '_S_VERSION', '2.0.0' );
+	define( '_S_VERSION', '2.2.0' );
 }
 
 // Require PHP 8.4+
@@ -128,6 +127,19 @@ function _s_setup(): void {
 
 	// Add support for block styles.
 	add_theme_support( 'wp-block-styles' );
+
+	// WP 6.9+: Register a footer navigation menu location
+	register_nav_menus(
+		array(
+			'menu-2' => esc_html__( 'Footer', '_s' ),
+		)
+	);
+
+	// WP 6.9+: Opt in to appearance tools for consistent block editor styling
+	add_theme_support( 'appearance-tools' );
+
+	// WP 7.0 prep: Declare support for the iframed editor (always-on in 7.0)
+	add_theme_support( 'block-template-parts' );
 }
 add_action( 'after_setup_theme', '_s_setup' );
 
@@ -218,3 +230,10 @@ require get_template_directory() . '/inc/performance.php';
  * Load security enhancements.
  */
 require get_template_directory() . '/inc/security.php';
+
+/**
+ * Load SEO and GEO optimizations.
+ *
+ * @since 2.2.0
+ */
+require get_template_directory() . '/inc/seo.php';

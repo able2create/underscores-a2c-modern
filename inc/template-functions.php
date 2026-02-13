@@ -25,10 +25,13 @@ add_filter( 'body_class', '_s_body_classes' );
 
 /**
  * Add a pingback url auto-discovery header for single posts, pages, or attachments.
+ *
+ * Disabled by default for admin/editor-only sites (reduces spam/DDoS vector).
+ * Uncomment the add_action line below if you need pingback support.
  */
 function _s_pingback_header(): void {
 	if ( is_singular() && pings_open() ) {
 		printf( '<link rel="pingback" href="%s">', esc_url( get_bloginfo( 'pingback_url' ) ) );
 	}
 }
-add_action( 'wp_head', '_s_pingback_header' );
+// add_action( 'wp_head', '_s_pingback_header' );
