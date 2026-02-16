@@ -87,13 +87,21 @@ function _s_output_structured_data(): void {
 		}
 
 		$schema = array(
-			'@context'      => 'https://schema.org',
-			'@type'         => 'Article',
-			'headline'      => get_the_title( $post ),
-			'url'           => get_permalink( $post ),
-			'datePublished' => get_the_date( 'c', $post ),
-			'dateModified'  => get_the_modified_date( 'c', $post ),
+			'@context' => 'https://schema.org',
+			'@type'    => 'Article',
+			'headline' => get_the_title( $post ),
+			'url'      => get_permalink( $post ),
 		);
+
+		// get_the_date() / get_the_modified_date() return false when unavailable.
+		$published = get_the_date( 'c', $post );
+		if ( $published ) {
+			$schema['datePublished'] = $published;
+		}
+		$modified = get_the_modified_date( 'c', $post );
+		if ( $modified ) {
+			$schema['dateModified'] = $modified;
+		}
 
 		$author = get_the_author_meta( 'display_name', (int) $post->post_author );
 		if ( $author ) {
@@ -103,7 +111,11 @@ function _s_output_structured_data(): void {
 			);
 		}
 
-		$description = get_the_excerpt( $post );
+		// Use post_excerpt directly to avoid triggering the_content filters
+		// (via wp_trim_excerpt → wp_filter_content_tags → WP_HTML_Tag_Processor)
+		// during wp_head, which can cause a "HTML parameter must be a string" notice
+		// when a third-party filter returns a non-string.
+		$description = $post->post_excerpt;
 		if ( $description ) {
 			$schema['description'] = wp_strip_all_tags( $description );
 		}
@@ -137,10 +149,14 @@ function _s_output_structured_data(): void {
 		return;
 	}
 
-	printf(
-		'<script type="application/ld+json">%s</script>' . "\n",
-		wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT )
-	);
+	// wp_json_encode() returns false on failure (e.g. invalid UTF-8 in content).
+	$json_ld = wp_json_encode( $schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT );
+	if ( $json_ld ) {
+		printf(
+			'<script type="application/ld+json">%s</script>' . "\n",
+			$json_ld
+		);
+	}
 }
 add_action( 'wp_head', '_s_output_structured_data', 1 );
 
@@ -162,7 +178,10 @@ function _s_output_meta_description(): void {
 	} elseif ( is_singular() ) {
 		$post = get_post();
 		if ( $post ) {
-			$description = get_the_excerpt( $post );
+			// Use post_excerpt directly to avoid triggering the_content filter chain
+			// (wp_trim_excerpt → wp_filter_content_tags → WP_HTML_Tag_Processor)
+			// during wp_head, which can produce a "HTML parameter must be a string" notice.
+			$description = $post->post_excerpt;
 		}
 	} elseif ( is_category() || is_tag() || is_tax() ) {
 		$description = term_description();
@@ -218,7 +237,10 @@ function _s_output_open_graph(): void {
 		$og_tags['og:title'] = get_the_title( $post );
 		$og_tags['og:url'] = get_permalink( $post );
 
-		$excerpt = get_the_excerpt( $post );
+		// Use post_excerpt directly to avoid triggering the_content filter chain
+		// (wp_trim_excerpt → wp_filter_content_tags → WP_HTML_Tag_Processor)
+		// during wp_head, which can produce a "HTML parameter must be a string" notice.
+		$excerpt = $post->post_excerpt;
 		if ( $excerpt ) {
 			$og_tags['og:description'] = wp_strip_all_tags( $excerpt );
 		}
@@ -231,8 +253,16 @@ function _s_output_open_graph(): void {
 		}
 
 		if ( 'post' === $post->post_type ) {
-			$og_tags['article:published_time'] = get_the_date( 'c', $post );
-			$og_tags['article:modified_time'] = get_the_modified_date( 'c', $post );
+			// get_the_date() / get_the_modified_date() return false when unavailable;
+			// only add to $og_tags when a valid string is returned.
+			$published_time = get_the_date( 'c', $post );
+			if ( $published_time ) {
+				$og_tags['article:published_time'] = $published_time;
+			}
+			$modified_time = get_the_modified_date( 'c', $post );
+			if ( $modified_time ) {
+				$og_tags['article:modified_time'] = $modified_time;
+			}
 		}
 	}
 

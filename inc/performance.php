@@ -105,10 +105,15 @@ function _s_add_speculation_rules(): void {
 		),
 	);
 
-	printf(
-		'<script type="speculationrules">%s</script>' . "\n",
-		wp_json_encode( $speculation_rules, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG )
-	);
+	// wp_json_encode() returns false on failure (e.g. invalid UTF-8); guard to
+	// prevent an empty <script> tag from being emitted with invalid JSON content.
+	$json = wp_json_encode( $speculation_rules, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG );
+	if ( $json ) {
+		printf(
+			'<script type="speculationrules">%s</script>' . "\n",
+			$json
+		);
+	}
 }
 add_action( 'wp_footer', '_s_add_speculation_rules', 99 );
 
