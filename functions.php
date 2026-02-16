@@ -116,3 +116,32 @@ require get_template_directory() . '/inc/customizer.php';
  * Performance optimizations.
  */
 require get_template_directory() . '/inc/performance.php';
+
+/**
+ * Security hardening.
+ */
+require get_template_directory() . '/inc/security.php';
+
+/**
+ * Remove unnecessary default widgets.
+ */
+add_action(
+	'widgets_init',
+	function (): void {
+		unregister_widget( 'WP_Widget_Archives' );
+		unregister_widget( 'WP_Widget_Calendar' );
+		unregister_widget( 'WP_Widget_Categories' );
+		unregister_widget( 'WP_Widget_Meta' );
+		unregister_widget( 'WP_Widget_Recent_Comments' );
+		unregister_widget( 'WP_Widget_Recent_Posts' );
+		unregister_widget( 'WP_Widget_RSS' );
+		unregister_widget( 'WP_Widget_Tag_Cloud' );
+	},
+	11
+);
+
+/**
+ * Excerpt settings.
+ */
+add_filter( 'excerpt_length', fn(): int => 40 );
+add_filter( 'excerpt_more', fn(): string => '...' );
