@@ -19,6 +19,14 @@ function _s_body_classes( array $classes ): array {
 		$classes[] = 'no-sidebar';
 	}
 
+	// Add logged-out class for non-authenticated users.
+	if ( ! is_user_logged_in() ) {
+		$classes[] = 'logged-out';
+	}
+
+	// Remove redundant default class.
+	$classes = array_diff( $classes, [ 'page-template-default' ] );
+
 	return $classes;
 }
 add_filter( 'body_class', '_s_body_classes' );
