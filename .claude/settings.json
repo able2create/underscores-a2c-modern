@@ -1,0 +1,8 @@
+{
+  "enabledPlugins": {
+    "frontend-design": {
+      "source": "claude-plugins-official",
+      "enabled": true
+    }
+  }
+}
