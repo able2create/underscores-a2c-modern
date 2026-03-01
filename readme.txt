@@ -1,20 +1,20 @@
-=== _s ===
+=== Underscores A2C Modern ===
 
-Contributors: automattic
-Tags: custom-background, custom-logo, custom-menu, featured-images, threaded-comments, translation-ready
+Contributors: able2create
+Tags: accessibility-ready, custom-background, custom-logo, custom-menu, featured-images, translation-ready, one-column, two-columns
 
-Requires at least: 4.5
-Tested up to: 5.4
-Requires PHP: 5.6
-Stable tag: 1.0.0
+Requires at least: 6.7
+Tested up to: 7.0
+Requires PHP: 8.4
+Stable tag: 2.2.0
 License: GNU General Public License v2 or later
 License URI: LICENSE
 
-A starter theme called _s, or underscores.
+A minimal, modern WordPress starter theme. Built with PHP 8.4+, pure CSS/JS. No build process. Plugin-friendly. Based on Underscores.
 
 == Description ==
 
-Hi. I'm a starter theme called _s, or underscores, if you like. I'm a theme meant for hacking so don't use me as a Parent Theme. Instead try turning me into the next, most awesome, WordPress theme out there. That's what I'm here for.
+A modernized fork of the original Underscores (_s) starter theme, updated for 2025+ WordPress development. Built with PHP 8.4+, modern CSS (Custom Properties, Container Queries, fluid typography), and ES6+ JavaScript — no build process required. Plugin-friendly, performance-optimized, and security-hardened out of the box.
 
 == Installation ==
 
@@ -26,14 +26,13 @@ Hi. I'm a starter theme called _s, or underscores, if you like. I'm a theme mean
 
 = Does this theme support any plugins? =
 
-_s includes support for WooCommerce and for Infinite Scroll in Jetpack.
+This theme is designed to work with all popular WordPress plugins. XML-RPC is enabled by default (required by some plugins like Jetpack). Optional security features can be enabled in inc/security.php.
 
 == Changelog ==
 
-= 1.0 - May 12 2015 =
-* Initial release
+= 2.2.0 =
+* Modernized fork with PHP 8.4+, theme.json V3, modern CSS and ES6+ JS
 
 == Credits ==
 
-* Based on Underscores https://underscores.me/, (C) 2012-2020 Automattic, Inc., [GPLv2 or later](https://www.gnu.org/licenses/gpl-2.0.html)
-* normalize.css https://necolas.github.io/normalize.css/, (C) 2012-2018 Nicolas Gallagher and Jonathan Neal, [MIT](https://opensource.org/licenses/MIT)
+* Based on Underscores https://underscores.me/, (C) 2012-2025 Automattic, Inc., [GPLv2 or later](https://www.gnu.org/licenses/gpl-2.0.html)
