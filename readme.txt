@@ -6,7 +6,7 @@ Tags: accessibility-ready, custom-background, custom-logo, custom-menu, featured
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.4
-Stable tag: 2.2.0
+Stable tag: 3.0.0
 License: GNU General Public License v2 or later
 License URI: LICENSE
 
@@ -26,9 +26,21 @@ A modernized fork of the original Underscores (_s) starter theme, updated for 20
 
 = Does this theme support any plugins? =
 
-This theme is designed to work with all popular WordPress plugins. XML-RPC is enabled by default (required by some plugins like Jetpack). Optional security features can be enabled in inc/security.php.
+This theme is designed to work with all popular WordPress plugins. Note that inc/security.php hardens the site by default — XML-RPC and pingbacks are disabled, the REST API is limited to logged-in users, and file editing is disabled. Adjust inc/security.php and inc/performance.php if a plugin needs any of these.
+
+= Is it compatible with WordPress 7.0? =
+
+Yes. The theme is tested with WordPress 7.0 "Armstrong". AI Connectors, Responsive Block Visibility, Custom CSS per block and the Font Library work out of the box with no theme configuration. theme.json provides styling for the new Breadcrumbs and Icon blocks.
 
 == Changelog ==
+
+= 3.0.0 =
+* WordPress 7.0 "Armstrong" support
+* theme.json styling for the new core Breadcrumbs and Icon blocks
+* Block-level :hover/:focus states for the Navigation block via theme.json
+* Removed the obsolete X-XSS-Protection security header (ignored by modern browsers)
+* Unified version number across style.css, readme.txt and functions.php
+* Corrected outdated documentation
 
 = 2.2.0 =
 * Modernized fork with PHP 8.4+, theme.json V3, modern CSS and ES6+ JS

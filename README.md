@@ -39,14 +39,14 @@ What's Different in This Modern Version?
 - Optimized asset loading
 
 ### 🔒 Security Hardened (But Plugin-Friendly!)
-- Modern security headers (configurable)
+- Modern security headers (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
 - WordPress version hidden
 - Login error messages sanitized
 - Unnecessary meta tags removed
-- Optional features (commented out by default):
-  - XML-RPC disable (some plugins need it)
-  - File editing disable (enable for production)
-  - Additional permission policies
+- XML-RPC and pingbacks disabled
+- REST API limited to logged-in users
+- File editing disabled (`DISALLOW_FILE_EDIT`)
+- Comments disabled site-wide
 
 ### 🎯 Modern JavaScript
 - ES6+ syntax throughout
@@ -64,6 +64,17 @@ What's Different in This Modern Version?
 - Block-specific settings
 - Fluid typography built-in
 
+WordPress 7.0 Support
+===
+
+Tested with WordPress 7.0 "Armstrong". The theme is compatible with the new core features:
+
+- **AI Connectors** — works out of the box. The connection is configured under *Settings » Connectors*; no theme configuration is required. To disable AI support site-wide, add `define( 'WP_AI_SUPPORT', false );` to `wp-config.php`.
+- **Responsive Block Visibility** — show/hide blocks per device directly in the block inspector; handled by core, no theme CSS needed.
+- **Custom CSS per block** — available in the block inspector's Advanced panel; no theme setup required.
+- **Font Library** — now available for classic themes like this one; manage and install fonts from the dashboard.
+- **New core blocks** — `theme.json` provides matching styles for the new **Breadcrumbs** and **Icon** blocks, and adds block-level `:hover`/`:focus` states for the **Navigation** block.
+
 Features
 ===
 
@@ -73,17 +84,17 @@ Features
 * Custom template tags for common functions
 * Performance-optimized asset loading
 * Modern responsive grid layouts using CSS Grid
-* Plugin-friendly (no restrictive security measures by default)
+* Plugin-friendly (security hardening kept compatible with popular plugins)
 * Translation-ready with `.pot` file
 * Print stylesheet included
-* Sidebar and comment features (commented out by default, easy to enable)
+* Security-hardened and performance-optimized out of the box
 * Licensed under GPLv2 or later
 
 Requirements
 ---------------
 
 - **PHP 8.4+**
-- **WordPress 6.4+**
+- **WordPress 6.7+** (tested up to 7.0)
 - Composer (optional, for development tools only)
 
 No Node.js, no build process, no compilation required!
@@ -161,16 +172,13 @@ For older browser support, you may need to add polyfills or transpilation.
 Plugin Compatibility
 ---------------
 
-This theme is designed to work with all popular WordPress plugins. Security features are conservative by default:
+This theme works with all popular WordPress plugins. It ships security- and performance-hardened by default — adjust `inc/security.php` / `inc/performance.php` if a plugin needs a disabled feature:
 
-- XML-RPC is **enabled** (required by some plugins like Jetpack)
-- File editing is **enabled** (disable in production via `inc/security.php`)
-- Emoji support is **enabled** (disable for performance via `inc/performance.php`)
-- Security headers are minimal and safe
-
-All restrictive features are commented out and can be enabled by uncommenting in:
-- `inc/security.php` - Security hardening options
-- `inc/performance.php` - Performance optimizations
+- XML-RPC and pingbacks are **disabled** (`inc/security.php`)
+- REST API is limited to **logged-in users** (`inc/security.php`)
+- File editing is **disabled** via `DISALLOW_FILE_EDIT` (`inc/security.php`)
+- Emoji scripts and jQuery Migrate are **removed** (`inc/performance.php`)
+- Comments are **disabled** site-wide (`inc/security.php`)
 
 Performance
 ---------------
@@ -186,16 +194,16 @@ Built-in performance features:
 Security
 ---------------
 
-Security features enabled by default:
-- Safe security headers (X-Content-Type-Options, X-Frame-Options, Referrer-Policy)
-- WordPress version hidden
+Security hardening enabled by default (`inc/security.php`):
+- Security headers: X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+- WordPress version hidden; generator and unnecessary `<head>` meta tags removed
 - Login error messages sanitized
-- Unnecessary meta tags removed
+- XML-RPC and pingbacks disabled
+- REST API limited to logged-in users; user enumeration blocked
+- File editing disabled (`DISALLOW_FILE_EDIT`)
+- Comments disabled site-wide
 
-Optional security features (commented out, uncomment to enable):
-- XML-RPC disable (some plugins like Jetpack need it)
-- File editing disable (recommended for production)
-- Additional permission policies
+To loosen any of these for a specific plugin, edit `inc/security.php` directly.
 
 File Structure
 ---------------
@@ -207,11 +215,10 @@ _s/
 │   ├── customizer.php         # Theme customizer settings
 │   ├── template-tags.php      # Custom template tags
 │   ├── template-functions.php # Template helper functions
-│   ├── performance.php        # Performance optimizations (mostly commented)
-│   └── security.php           # Security enhancements (plugin-friendly)
+│   ├── performance.php        # Performance optimizations
+│   └── security.php           # Security hardening
 ├── js/
-│   ├── navigation.js         # Mobile navigation
-│   └── customizer.js         # Customizer preview JS
+│   └── customizer.js          # Customizer preview JS
 ├── template-parts/           # Template part files
 ├── functions.php             # Theme functions
 ├── style.css                 # Main stylesheet
