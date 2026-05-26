@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 
 /**
  * Add postMessage support for site title and description for the Theme Customizer.
