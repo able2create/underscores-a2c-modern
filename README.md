@@ -4,7 +4,7 @@ Modernized _s Starter Theme
 This is a **modernized fork** of the original Underscores (_s) starter theme, updated for 2025+ with:
 
 - **PHP 8.4+** with type hints and modern syntax
-- **WordPress 6.9** with theme.json V3 for modern features
+- **WordPress 6.7+** with theme.json V3 for modern features (tested up to 7.0)
 - **Modern CSS** - pure CSS with Custom Properties, no build process
 - **Modern JavaScript** (ES6+) without jQuery
 - **No build process required** - pure PHP, CSS, and JS
