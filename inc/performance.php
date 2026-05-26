@@ -2,21 +2,16 @@
 
 
 /**
- * Add lazy loading to post thumbnails
+ * Performance optimizations
  *
- * @param array<string,string> $attr Image attributes.
- * @return array<string,string>
+ * @package _s
  */
-function _s_add_lazy_loading( array $attr ): array {
-	$attr['loading'] = 'lazy';
-	$attr['decoding'] = 'async';
-	return $attr;
-}
-add_filter( 'wp_get_attachment_image_attributes', '_s_add_lazy_loading' );
+
+// ─── Emoji ────────────────────────────────────────────────────────────────────
 
 /**
- * Disable emoji script
- * Note: Most modern browsers have native emoji support
+ * Disable WordPress emoji scripts.
+ * Modern browsers handle emojis natively – saves ~20KB JS and one external request.
  */
 function _s_disable_emojis(): void {
 	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
@@ -29,94 +24,126 @@ function _s_disable_emojis(): void {
 }
 add_action( 'init', '_s_disable_emojis' );
 
+add_filter( 'tiny_mce_plugins', function ( array $plugins ): array {
+	return array_diff( $plugins, [ 'wpemoji' ] );
+} );
+
+// ─── Scripts & Styles ─────────────────────────────────────────────────────────
+
 /**
- * Remove query strings from static resources (uncomment if needed)
- * Note: Some caching plugins handle this better
+ * Remove jQuery Migrate (not needed for modern code).
  */
-/*
-function _s_remove_query_strings( string $src ): string {
-	if ( str_contains( $src, '?ver=' ) ) {
-		$src = remove_query_arg( 'ver', $src );
+add_action( 'wp_default_scripts', function ( $scripts ): void {
+	if ( ! is_admin() && isset( $scripts->registered['jquery'] ) ) {
+		$script = $scripts->registered['jquery'];
+		if ( $script->deps ) {
+			$script->deps = array_diff( $script->deps, [ 'jquery-migrate' ] );
+		}
 	}
-	return $src;
-}
-add_filter( 'script_loader_src', '_s_remove_query_strings', 15 );
-add_filter( 'style_loader_src', '_s_remove_query_strings', 15 );
-*/
+} );
 
 /**
- * Add preconnect for external domains (uncomment and customize as needed)
- * Add your external domains here (fonts, CDNs, etc.)
+ * Add `defer` to non-critical frontend scripts.
  */
-/*
-function _s_add_resource_hints(): void {
-	?>
-	<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-	<link rel="dns-prefetch" href="https://fonts.googleapis.com">
-	<?php
-}
-add_action( 'wp_head', '_s_add_resource_hints', 1 );
-*/
-
-/**
- * Defer non-critical CSS (uncomment if needed)
- *
- * @param string $html HTML tag.
- * @param string $handle Style handle.
- * @return string
- */
-/*
-function _s_defer_non_critical_css( string $html, string $handle ): string {
-	// Add handles that should be deferred
-	$defer_styles = array();
-
-	if ( in_array( $handle, $defer_styles, true ) ) {
-		$html = str_replace( "media='all'", "media='print' onload=\"this.media='all'\"", $html );
+add_filter( 'script_loader_tag', function ( string $tag, string $handle ): string {
+	if ( is_admin() ) {
+		return $tag;
 	}
-
-	return $html;
-}
-add_filter( 'style_loader_tag', '_s_defer_non_critical_css', 10, 2 );
-*/
-
-/**
- * Add async/defer attributes to scripts (uncomment if needed)
- * Note: WordPress 6.3+ handles this via 'strategy' parameter in wp_enqueue_script
- *
- * @param string $tag Script tag.
- * @param string $handle Script handle.
- * @return string
- */
-/*
-function _s_add_async_defer_attributes( string $tag, string $handle ): string {
-	// Scripts that should be async
-	$async_scripts = array();
-
-	if ( in_array( $handle, $async_scripts, true ) && ! is_admin() ) {
-		return str_replace( ' src', ' async src', $tag );
+	$excluded = [ 'jquery-core', 'comment-reply' ];
+	if ( ! in_array( $handle, $excluded, true ) && ! str_contains( $tag, 'defer' ) ) {
+		$tag = str_replace( ' src', ' defer src', $tag );
 	}
-
 	return $tag;
-}
-add_filter( 'script_loader_tag', '_s_add_async_defer_attributes', 10, 2 );
-*/
+}, 10, 2 );
 
 /**
- * Remove unnecessary head links
- * Removes feed links and REST API discovery for cleaner HTML
+ * Remove query strings from static resources (improves proxy/CDN cache hit rate).
  */
-function _s_cleanup_head(): void {
-	// Remove feed links
-	remove_action( 'wp_head', 'feed_links', 2 );
-	remove_action( 'wp_head', 'feed_links_extra', 3 );
+add_filter( 'script_loader_src', function ( string $src ): string {
+	return ! is_admin() ? remove_query_arg( 'ver', $src ) : $src;
+}, 15 );
 
-	// Remove REST API link
-	remove_action( 'wp_head', 'rest_output_link_wp_head' );
+add_filter( 'style_loader_src', function ( string $src ): string {
+	return ! is_admin() ? remove_query_arg( 'ver', $src ) : $src;
+}, 15 );
 
-	// Remove oEmbed discovery links
-	remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
+/**
+ * Disable Gutenberg block library CSS when no blocks are used on the page.
+ */
+add_action( 'wp_enqueue_scripts', function (): void {
+	if ( ! has_blocks() ) {
+		wp_dequeue_style( 'wp-block-library' );
+		wp_dequeue_style( 'wp-block-library-theme' );
+		wp_dequeue_style( 'global-styles' );
+	}
+}, 100 );
 
-	// Remove REST API link in HTTP headers
-	remove_action( 'template_redirect', 'rest_output_link_header', 11 );
+/**
+ * Remove Gutenberg classic-themes compatibility CSS.
+ */
+add_action( 'wp_enqueue_scripts', function (): void {
+	wp_dequeue_style( 'classic-theme-styles' );
+}, 20 );
+
+/**
+ * Disable dashicons on frontend for non-logged-in users.
+ */
+add_action( 'wp_enqueue_scripts', function (): void {
+	if ( ! is_user_logged_in() ) {
+		wp_dequeue_style( 'dashicons' );
+		wp_deregister_style( 'dashicons' );
+	}
+} );
+
+/**
+ * Disable wp-embed script (not needed if embeds aren't used).
+ */
+add_action( 'wp_footer', function (): void {
+	wp_deregister_script( 'wp-embed' );
+} );
+
+/**
+ * Remove Speculation Rules API (unnecessary for small sites).
+ */
+add_action( 'wp_footer', function (): void {
+	remove_action( 'wp_footer', 'wp_print_link_tag', 10 );
+}, 0 );
+
+add_action( 'wp_enqueue_scripts', function (): void {
+	wp_dequeue_script( 'wp-speculation-rules' );
+}, 999 );
+
+// ─── Heartbeat & Autosave ─────────────────────────────────────────────────────
+
+/**
+ * Disable WordPress heartbeat API on frontend (reduces AJAX requests).
+ */
+add_action( 'init', function (): void {
+	if ( ! is_admin() ) {
+		wp_deregister_script( 'heartbeat' );
+	}
+} );
+
+if ( ! defined( 'WP_POST_REVISIONS' ) ) {
+	define( 'WP_POST_REVISIONS', 3 );
 }
-add_action( 'init', '_s_cleanup_head' );
+
+if ( ! defined( 'AUTOSAVE_INTERVAL' ) ) {
+	define( 'AUTOSAVE_INTERVAL', 300 );
+}
+
+// ─── DNS Prefetch ─────────────────────────────────────────────────────────────
+
+/**
+ * Remove unnecessary DNS prefetches added by WordPress core.
+ */
+add_action( 'init', function (): void {
+	remove_action( 'wp_head', 'wp_resource_hints', 2 );
+} );
+
+// ─── Miscellaneous ────────────────────────────────────────────────────────────
+
+/**
+ * Enable native lazy loading for images.
+ */
+add_filter( 'wp_lazy_loading_enabled', '__return_true' );

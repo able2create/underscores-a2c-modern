@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * _s functions and definitions
  *
@@ -11,69 +9,26 @@ declare(strict_types=1);
  */
 
 if ( ! defined( '_S_VERSION' ) ) {
-	// Replace the version number of the theme on each release.
-	define( '_S_VERSION', '2.0.0' );
-}
-
-// Require PHP 8.4+
-if ( version_compare( PHP_VERSION, '8.4.0', '<' ) ) {
-	add_action(
-		'admin_notices',
-		static function (): void {
-			printf(
-				'<div class="notice notice-error"><p>%s</p></div>',
-				esc_html__( 'This theme requires PHP 8.4 or higher. You are running PHP ' . PHP_VERSION, '_s' )
-			);
-		}
-	);
-	return;
+	define( '_S_VERSION', '3.0.0' );
 }
 
 /**
  * Sets up theme defaults and registers support for various WordPress features.
- *
- * Note that this function is hooked into the after_setup_theme hook, which
- * runs before the init hook. The init hook is too late for some features, such
- * as indicating support for post thumbnails.
  */
 function _s_setup(): void {
-	/*
-		* Make theme available for translation.
-		* Translations can be filed in the /languages/ directory.
-		* If you're building a theme based on _s, use a find and replace
-		* to change '_s' to the name of your theme in all the template files.
-		*/
 	load_theme_textdomain( '_s', get_template_directory() . '/languages' );
 
-	// Add default posts and comments RSS feed links to head.
 	add_theme_support( 'automatic-feed-links' );
-
-	/*
-		* Let WordPress manage the document title.
-		* By adding theme support, we declare that this theme does not use a
-		* hard-coded <title> tag in the document head, and expect WordPress to
-		* provide it for us.
-		*/
 	add_theme_support( 'title-tag' );
-
-	/*
-		* Enable support for Post Thumbnails on posts and pages.
-		*
-		* @link https://developer.wordpress.org/themes/functionality/featured-images-post-thumbnails/
-		*/
 	add_theme_support( 'post-thumbnails' );
 
-	// This theme uses wp_nav_menu() in one location.
 	register_nav_menus(
 		array(
 			'menu-1' => esc_html__( 'Primary', '_s' ),
+			'menu-2' => esc_html__( 'Footer', '_s' ),
 		)
 	);
 
-	/*
-		* Switch default core markup for search form, comment form, and comments
-		* to output valid HTML5.
-		*/
 	add_theme_support(
 		'html5',
 		array(
@@ -87,7 +42,6 @@ function _s_setup(): void {
 		)
 	);
 
-	// Set up the WordPress core custom background feature.
 	add_theme_support(
 		'custom-background',
 		apply_filters(
@@ -99,14 +53,8 @@ function _s_setup(): void {
 		)
 	);
 
-	// Add theme support for selective refresh for widgets.
 	add_theme_support( 'customize-selective-refresh-widgets' );
 
-	/**
-	 * Add support for core custom logo.
-	 *
-	 * @link https://codex.wordpress.org/Theme_Logo
-	 */
 	add_theme_support(
 		'custom-logo',
 		array(
@@ -117,25 +65,20 @@ function _s_setup(): void {
 		)
 	);
 
-	// Add support for responsive embeds.
 	add_theme_support( 'responsive-embeds' );
-
-	// Add support for editor styles.
 	add_theme_support( 'editor-styles' );
 	add_editor_style( 'editor-style.css' );
 
 	// Add support for wide alignments.
 	add_theme_support( 'align-wide' );
-
-	// Add support for block styles.
 	add_theme_support( 'wp-block-styles' );
+	add_theme_support( 'appearance-tools' );
+	add_theme_support( 'block-template-parts' );
 }
 add_action( 'after_setup_theme', '_s_setup' );
 
 /**
- * Set the content width in pixels, based on the theme's design and stylesheet.
- *
- * Priority 0 to make it available to lower priority callbacks.
+ * Set the content width in pixels.
  *
  * @global int $content_width
  */
@@ -145,48 +88,10 @@ function _s_content_width(): void {
 add_action( 'after_setup_theme', '_s_content_width', 0 );
 
 /**
- * Register widget area.
- *
- * Uncomment this function if you need sidebars/widget areas.
- *
- * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
- */
-/*
-function _s_widgets_init(): void {
-	register_sidebar(
-		array(
-			'name'          => esc_html__( 'Sidebar', '_s' ),
-			'id'            => 'sidebar-1',
-			'description'   => esc_html__( 'Add widgets here.', '_s' ),
-			'before_widget' => '<section id="%1$s" class="widget %2$s">',
-			'after_widget'  => '</section>',
-			'before_title'  => '<h2 class="widget-title">',
-			'after_title'   => '</h2>',
-		)
-	);
-}
-add_action( 'widgets_init', '_s_widgets_init' );
-*/
-
-/**
  * Enqueue scripts and styles.
  */
 function _s_scripts(): void {
-	// Enqueue main stylesheet
-	wp_enqueue_style(
-		'_s-style',
-		get_stylesheet_uri(),
-		array(),
-		_S_VERSION
-	);
-
-	// Enqueue comment reply script if needed
-	// Uncomment if you need threaded comments
-	/*
-	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
-		wp_enqueue_script( 'comment-reply' );
-	}
-	*/
+	wp_enqueue_style( '_s-style', get_stylesheet_uri(), array(), _S_VERSION );
 }
 add_action( 'wp_enqueue_scripts', '_s_scripts' );
 
@@ -211,11 +116,35 @@ require get_template_directory() . '/inc/template-functions.php';
 require get_template_directory() . '/inc/customizer.php';
 
 /**
- * Load performance optimizations.
+ * Performance optimizations.
  */
 require get_template_directory() . '/inc/performance.php';
 
 /**
- * Load security enhancements.
+ * Security hardening.
  */
 require get_template_directory() . '/inc/security.php';
+
+/**
+ * Remove unnecessary default widgets.
+ */
+add_action(
+	'widgets_init',
+	function (): void {
+		unregister_widget( 'WP_Widget_Archives' );
+		unregister_widget( 'WP_Widget_Calendar' );
+		unregister_widget( 'WP_Widget_Categories' );
+		unregister_widget( 'WP_Widget_Meta' );
+		unregister_widget( 'WP_Widget_Recent_Comments' );
+		unregister_widget( 'WP_Widget_Recent_Posts' );
+		unregister_widget( 'WP_Widget_RSS' );
+		unregister_widget( 'WP_Widget_Tag_Cloud' );
+	},
+	11
+);
+
+/**
+ * Excerpt settings.
+ */
+add_filter( 'excerpt_length', fn(): int => 40 );
+add_filter( 'excerpt_more', fn(): string => '...' );
