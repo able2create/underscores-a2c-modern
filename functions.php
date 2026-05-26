@@ -122,6 +122,7 @@ function _s_setup(): void {
 
 	// Add support for editor styles.
 	add_theme_support( 'editor-styles' );
+	add_editor_style( 'editor-style.css' );
 
 	// Add support for wide alignments.
 	add_theme_support( 'align-wide' );
