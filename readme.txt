@@ -14,7 +14,7 @@ A minimal, modern WordPress starter theme. Built with PHP 8.4+, pure CSS/JS. No 
 
 == Description ==
 
-A modernized fork of the original Underscores (_s) starter theme, updated for 2025+ WordPress development. Built with PHP 8.4+, modern CSS (Custom Properties, Container Queries, fluid typography), and ES6+ JavaScript — no build process required. Plugin-friendly, performance-optimized, and security-hardened out of the box.
+A modernized fork of the original Underscores (_s) starter theme, updated for 2025+ WordPress development. Built with PHP 8.4+, modern CSS (Custom Properties, fluid typography via theme.json), and ES6+ JavaScript — no build process required. Plugin-friendly, performance-optimized, and security-hardened out of the box.
 
 == Installation ==
 
