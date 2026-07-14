@@ -62,7 +62,9 @@ add_filter( 'rest_authentication_errors', function ( $result ) {
 	$blocked_namespaces = apply_filters( '_s_rest_blocked_namespaces', [ 'wp/v2' ] );
 
 	foreach ( $blocked_namespaces as $namespace ) {
-		if ( str_starts_with( $rest_route, trim( $namespace, '/' ) . '/' ) ) {
+		$namespace = trim( $namespace, '/' );
+
+		if ( $rest_route === $namespace || str_starts_with( $rest_route, $namespace . '/' ) ) {
 			return new WP_Error(
 				'rest_not_logged_in',
 				__( 'REST API access restricted.', '_s' ),
