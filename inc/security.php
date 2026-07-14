@@ -38,19 +38,39 @@ add_filter( 'xmlrpc_methods', function ( array $methods ): array {
 // ─── REST API ─────────────────────────────────────────────────────────────────
 
 /**
- * Restrict REST API access to logged-in users.
+ * Restrict the core wp/v2 namespace (posts, pages, users, media, comments,
+ * taxonomies, templates, ...) to logged-in users, since it can expose
+ * content and site structure to anonymous scraping/enumeration.
+ *
+ * Third-party namespaces (e.g. wp-statistics/v2, contact-form-7/v1) are left
+ * untouched, since plugins often need anonymous visitors to reach them.
+ * Add a namespace to `_s_rest_blocked_namespaces` to lock down a specific
+ * plugin endpoint too, e.g.:
+ *   add_filter( '_s_rest_blocked_namespaces', fn( $ns ) => [ ...$ns, 'some-plugin/v1' ] );
  */
 add_filter( 'rest_authentication_errors', function ( $result ) {
 	if ( ! empty( $result ) ) {
 		return $result;
 	}
-	if ( ! is_user_logged_in() ) {
-		return new WP_Error(
-			'rest_not_logged_in',
-			__( 'REST API access restricted.', '_s' ),
-			[ 'status' => 401 ]
-		);
+
+	if ( is_user_logged_in() ) {
+		return $result;
 	}
+
+	$rest_route = ltrim( $GLOBALS['wp']->query_vars['rest_route'] ?? '', '/' );
+
+	$blocked_namespaces = apply_filters( '_s_rest_blocked_namespaces', [ 'wp/v2' ] );
+
+	foreach ( $blocked_namespaces as $namespace ) {
+		if ( str_starts_with( $rest_route, trim( $namespace, '/' ) . '/' ) ) {
+			return new WP_Error(
+				'rest_not_logged_in',
+				__( 'REST API access restricted.', '_s' ),
+				[ 'status' => 401 ]
+			);
+		}
+	}
+
 	return $result;
 } );
 
