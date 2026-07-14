@@ -15,39 +15,23 @@ This is a **modernized fork** of the original Underscores (_s) starter theme, up
 What's Different in This Modern Version?
 ===
 
-### 🚀 Modern PHP (8.4+)
+### Modern PHP (8.4+)
 - Full type hints on all functions (parameters and return types)
 - Array type documentation with PHPDoc generics
 - Modern PHP features throughout
 
-### 🎨 Modern CSS (No Build Process!)
+### Modern CSS (No Build Process!)
 - **CSS Custom Properties** (CSS Variables) for theming
 - **Modern CSS Reset** based on current best practices
 - No SASS/SCSS - pure, modern CSS that runs in all modern browsers
 
-### ⚡ Performance Optimizations
-- Lazy loading and async decoding for images
-- **Emoji support disabled** for better performance
-- Feed links removed from head
-- Optimized asset loading
+Security and performance hardening details are covered in their own sections below, so they're not repeated here.
 
-### 🔒 Security Hardened
-- Modern security headers
-- **XML-RPC disabled** (security risk - comment out if needed by plugins like Jetpack)
-- **File editing disabled** (production security - comment out if needed)
-- WordPress version hidden
-- Login error messages sanitized
-- Unnecessary meta tags removed
+### Modern JavaScript
+- The only shipped JavaScript is `js/customizer.js`, an ES6+ Customizer live-preview script (no jQuery)
+- No frontend JavaScript is enqueued by default, keeping the theme dependency-free
 
-### 🎯 Modern JavaScript
-- ES6+ syntax throughout
-- No jQuery dependency
-- Modern DOM APIs
-- Event delegation
-- Passive event listeners
-- Proper initialization patterns
-
-### 🎭 theme.json V3
+### theme.json V3
 - Complete theme.json implementation
 - Color palettes and typography scales
 - Spacing and layout settings
@@ -71,13 +55,12 @@ Features
 
 * Clean, semantic HTML5 templates
 * Custom header and logo support
-* Navigation menu support with keyboard and touch accessibility
+* Single-level navigation menu via `wp_nav_menu()`
 * Custom template tags for common functions
 * Performance-optimized asset loading
 * Modern responsive grid layouts using CSS Grid
 * Plugin-friendly (security hardening kept compatible with popular plugins)
 * Translation-ready with `.pot` file
-* Print stylesheet included
 * Security-hardened and performance-optimized out of the box
 * Licensed under GPLv2 or later
 
@@ -163,24 +146,20 @@ For older browser support, you may need to add polyfills or transpilation.
 Plugin Compatibility
 ---------------
 
-This theme works with all popular WordPress plugins. It ships security- and performance-hardened by default — adjust `inc/security.php` / `inc/performance.php` if a plugin needs a disabled feature:
+This theme works with all popular WordPress plugins. It ships security- and performance-hardened by default — see the [Security](#security) section below for what's restricted and how to adjust `inc/security.php` / `inc/performance.php` if a plugin needs a disabled feature re-enabled.
 
-- XML-RPC and pingbacks are **disabled** (`inc/security.php`)
-- REST API is limited to **logged-in users** (`inc/security.php`)
-- File editing is **disabled** via `DISALLOW_FILE_EDIT` (`inc/security.php`)
-- Emoji scripts and jQuery Migrate are **removed** (`inc/performance.php`)
-- Comments are **disabled** site-wide (`inc/security.php`)
+One exception worth calling out: the REST API restriction only applies to the core `wp/v2` namespace. Plugins with their own REST namespace (e.g. WP-Statistics' `wp-statistics/v2`) stay reachable for anonymous visitors without any changes.
 
 Performance
 ---------------
 
 Built-in performance features:
 - Lazy loading images by default
-- Deferred JavaScript loading
-- Resource hints for external domains
-- Minimal CSS and JS (no frameworks)
-- No jQuery dependency
-- Efficient WordPress queries
+- Deferred JavaScript loading (`defer` on non-critical scripts)
+- Emoji scripts and jQuery Migrate removed
+- Unnecessary DNS-prefetch resource hints removed
+- Block library CSS, dashicons and heartbeat dequeued when not needed
+- Minimal CSS and JS (no frameworks, no jQuery dependency)
 
 Security
 ---------------
@@ -190,7 +169,7 @@ Security hardening enabled by default (`inc/security.php`):
 - WordPress version hidden; generator and unnecessary `<head>` meta tags removed
 - Login error messages sanitized
 - XML-RPC and pingbacks disabled
-- REST API limited to logged-in users; user enumeration blocked
+- Core `wp/v2` REST namespace limited to logged-in users; user enumeration blocked. Other REST namespaces (e.g. a plugin's own `plugin-slug/v1`) stay open for anonymous requests unless added to the `_s_rest_blocked_namespaces` filter
 - File editing disabled (`DISALLOW_FILE_EDIT`)
 - Comments disabled site-wide
 
