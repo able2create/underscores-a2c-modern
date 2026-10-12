@@ -9,7 +9,7 @@
  */
 
 if ( ! defined( '_S_VERSION' ) ) {
-	define( '_S_VERSION', '3.0.1' );
+	define( '_S_VERSION', '3.1.0' );
 }
 
 /**

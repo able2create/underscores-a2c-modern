@@ -4,7 +4,7 @@ Modernized _s Starter Theme
 This is a **modernized fork** of the original Underscores (_s) starter theme, updated for 2025+ with:
 
 - **PHP 8.4+** with type hints and modern syntax
-- **WordPress 6.7+** with theme.json V3 for modern features (tested up to 7.0)
+- **WordPress 6.7+** with theme.json V3 for modern features (tested up to 7.1)
 - **Modern CSS** - pure CSS with Custom Properties, no build process
 - **Modern JavaScript** (ES6+) without jQuery
 - **No build process required** - pure PHP, CSS, and JS
@@ -39,10 +39,12 @@ Security and performance hardening details are covered in their own sections bel
 - Block-specific settings
 - Fluid typography built-in
 
-WordPress 7.0 Support
+WordPress 7.1 Support
 ===
 
-Tested with WordPress 7.0 "Armstrong". The theme is compatible with the new core features:
+Tested with WordPress 7.1 "Mary Lou". The block editor is now always rendered in an iframe, also for classic themes like this one. Editor styling therefore comes exclusively from `editor-style.css` (loaded via `add_editor_style()`) and the theme.json presets — CSS printed via `admin_head` or `admin_enqueue_scripts` no longer reaches the editor canvas.
+
+Features introduced in WordPress 7.0 "Armstrong" keep working:
 
 - **AI Connectors** — works out of the box. The connection is configured under *Settings » Connectors*; no theme configuration is required. To disable AI support site-wide, add `define( 'WP_AI_SUPPORT', false );` to `wp-config.php`.
 - **Responsive Block Visibility** — show/hide blocks per device directly in the block inspector; handled by core, no theme CSS needed.
@@ -68,7 +70,7 @@ Requirements
 ---------------
 
 - **PHP 8.4+**
-- **WordPress 6.7+** (tested up to 7.0)
+- **WordPress 6.7+** (tested up to 7.1)
 - Composer (optional, for development tools only)
 
 No Node.js, no build process, no compilation required!
@@ -154,12 +156,18 @@ Performance
 ---------------
 
 Built-in performance features:
-- Lazy loading images by default
-- Deferred JavaScript loading (`defer` on non-critical scripts)
 - Emoji scripts and jQuery Migrate removed
-- Unnecessary DNS-prefetch resource hints removed
-- Block library CSS, dashicons and heartbeat dequeued when not needed
+- Emoji DNS prefetch removed (resource hints added by plugins are kept)
+- Dashicons dequeued for logged-out visitors, heartbeat disabled on the frontend
 - Minimal CSS and JS (no frameworks, no jQuery dependency)
+
+Left to WordPress core on purpose, because overriding it breaks plugins:
+- Script loading strategy (`defer`/`async`) — register scripts with the `strategy` argument instead of forcing `defer` on every script
+- `ver` query strings — they are the cache busting after updates
+- Block and global styles — loaded on demand by core; `global-styles` holds the theme.json CSS variables used by `style.css`
+- Speculative loading (WordPress 6.8+) — free prefetching of likely next pages
+
+Post revisions and autosave interval belong in `wp-config.php` (`WP_POST_REVISIONS`, `AUTOSAVE_INTERVAL`); core defines both before the theme loads.
 
 Security
 ---------------
@@ -169,7 +177,8 @@ Security hardening enabled by default (`inc/security.php`):
 - WordPress version hidden; generator and unnecessary `<head>` meta tags removed
 - Login error messages sanitized
 - XML-RPC and pingbacks disabled
-- Core `wp/v2` REST namespace limited to logged-in users; user enumeration blocked. Other REST namespaces (e.g. a plugin's own `plugin-slug/v1`) stay open for anonymous requests unless added to the `_s_rest_blocked_namespaces` filter
+- Core `wp/v2` REST namespace limited to logged-in users. Other REST namespaces (e.g. a plugin's own `plugin-slug/v1`) stay open for anonymous requests unless added to the `_s_rest_blocked_namespaces` filter
+- User enumeration blocked: REST user routes (anonymous only — the editor keeps them), `?author=N` and author archives, users sitemap, author data in oEmbed, and the lost-password form no longer reveals whether an account exists
 - File editing disabled (`DISALLOW_FILE_EDIT`)
 - Comments disabled site-wide
 

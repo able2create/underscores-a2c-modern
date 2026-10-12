@@ -43,49 +43,6 @@ add_action( 'wp_default_scripts', function ( $scripts ): void {
 } );
 
 /**
- * Add `defer` to non-critical frontend scripts.
- */
-add_filter( 'script_loader_tag', function ( string $tag, string $handle ): string {
-	if ( is_admin() ) {
-		return $tag;
-	}
-	$excluded = [ 'jquery-core', 'comment-reply' ];
-	if ( ! in_array( $handle, $excluded, true ) && ! str_contains( $tag, 'defer' ) ) {
-		$tag = str_replace( ' src', ' defer src', $tag );
-	}
-	return $tag;
-}, 10, 2 );
-
-/**
- * Remove query strings from static resources (improves proxy/CDN cache hit rate).
- */
-add_filter( 'script_loader_src', function ( string $src ): string {
-	return ! is_admin() ? remove_query_arg( 'ver', $src ) : $src;
-}, 15 );
-
-add_filter( 'style_loader_src', function ( string $src ): string {
-	return ! is_admin() ? remove_query_arg( 'ver', $src ) : $src;
-}, 15 );
-
-/**
- * Disable Gutenberg block library CSS when no blocks are used on the page.
- */
-add_action( 'wp_enqueue_scripts', function (): void {
-	if ( ! has_blocks() ) {
-		wp_dequeue_style( 'wp-block-library' );
-		wp_dequeue_style( 'wp-block-library-theme' );
-		wp_dequeue_style( 'global-styles' );
-	}
-}, 100 );
-
-/**
- * Remove Gutenberg classic-themes compatibility CSS.
- */
-add_action( 'wp_enqueue_scripts', function (): void {
-	wp_dequeue_style( 'classic-theme-styles' );
-}, 20 );
-
-/**
  * Disable dashicons on frontend for non-logged-in users.
  */
 add_action( 'wp_enqueue_scripts', function (): void {
@@ -102,21 +59,11 @@ add_action( 'wp_footer', function (): void {
 	wp_deregister_script( 'wp-embed' );
 } );
 
-/**
- * Remove Speculation Rules API (unnecessary for small sites).
- */
-add_action( 'wp_footer', function (): void {
-	remove_action( 'wp_footer', 'wp_print_link_tag', 10 );
-}, 0 );
-
-add_action( 'wp_enqueue_scripts', function (): void {
-	wp_dequeue_script( 'wp-speculation-rules' );
-}, 999 );
-
-// ─── Heartbeat & Autosave ─────────────────────────────────────────────────────
+// ─── Heartbeat ────────────────────────────────────────────────────────────────
 
 /**
  * Disable WordPress heartbeat API on frontend (reduces AJAX requests).
+ * Remove this if a plugin needs heartbeat on the frontend (live chat, LMS, ...).
  */
 add_action( 'init', function (): void {
 	if ( ! is_admin() ) {
@@ -124,26 +71,19 @@ add_action( 'init', function (): void {
 	}
 } );
 
-if ( ! defined( 'WP_POST_REVISIONS' ) ) {
-	define( 'WP_POST_REVISIONS', 3 );
-}
-
-if ( ! defined( 'AUTOSAVE_INTERVAL' ) ) {
-	define( 'AUTOSAVE_INTERVAL', 300 );
-}
-
-// ─── DNS Prefetch ─────────────────────────────────────────────────────────────
+// ─── Resource Hints ───────────────────────────────────────────────────────────
 
 /**
- * Remove unnecessary DNS prefetches added by WordPress core.
+ * Remove the core emoji DNS prefetch (s.w.org) but keep hints added by plugins.
  */
-add_action( 'init', function (): void {
-	remove_action( 'wp_head', 'wp_resource_hints', 2 );
-} );
-
-// ─── Miscellaneous ────────────────────────────────────────────────────────────
-
-/**
- * Enable native lazy loading for images.
- */
-add_filter( 'wp_lazy_loading_enabled', '__return_true' );
+add_filter( 'wp_resource_hints', function ( array $urls, string $relation_type ): array {
+	if ( 'dns-prefetch' !== $relation_type ) {
+		return $urls;
+	}
+	return array_values(
+		array_filter(
+			$urls,
+			fn( $url ): bool => ! str_contains( is_array( $url ) ? (string) ( $url['href'] ?? '' ) : (string) $url, 's.w.org' )
+		)
+	);
+}, 10, 2 );

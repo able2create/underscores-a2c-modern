@@ -4,8 +4,8 @@ Theme URI: https://github.com/able2create/underscores-a2c-modern
 Author: Automattic
 Author URI: https://automattic.com/
 Description: A minimal, modern WordPress starter theme. Built with PHP 8.4+, pure CSS/JS. No build process. Plugin-friendly. Based on Underscores.
-Version: 3.0.1
-Tested up to: 7.0
+Version: 3.1.0
+Tested up to: 7.1
 Requires at least: 6.7
 Requires PHP: 8.4
 License: GNU General Public License v2 or later
@@ -50,18 +50,18 @@ input, button, textarea, select {
 # Variables
 --------------------------------------------------------------*/
 :root {
-	/* Colors */
-	--color-text: #333333;
-	--color-heading: #1a1a1a;
-	--color-link: #0073aa;
-	--color-link-hover: #005177;
-	--color-border: #dddddd;
-	--color-bg: #ffffff;
-	--color-bg-alt: #f7f7f7;
+	/* Colors (single source: theme.json palette) */
+	--color-text: var(--wp--preset--color--secondary, #404040);
+	--color-heading: var(--wp--preset--color--contrast, #1a1a1a);
+	--color-link: var(--wp--preset--color--primary, #4169e1);
+	--color-link-hover: var(--wp--preset--color--contrast, #1a1a1a);
+	--color-border: var(--wp--preset--color--border, #cccccc);
+	--color-bg: var(--wp--preset--color--base, #ffffff);
+	--color-bg-alt: var(--wp--preset--color--surface, #f5f5f5);
 
 	/* Typography */
-	--font-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-	--font-code: ui-monospace, Menlo, Monaco, 'Courier New', monospace;
+	--font-base: var(--wp--preset--font-family--system, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+	--font-code: var(--wp--preset--font-family--monospace, ui-monospace, Menlo, Monaco, monospace);
 
 	/* Layout */
 	--content-width: 800px;

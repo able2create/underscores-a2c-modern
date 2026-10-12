@@ -6,7 +6,7 @@
  *
  * @param WP_Customize_Manager $wp_customize Theme Customizer object.
  */
-function _s_customize_register( \WP_Customize_Manager $wp_customize ): void {
+function _s_customize_register( WP_Customize_Manager $wp_customize ): void {
 	$wp_customize->get_setting( 'blogname' )->transport         = 'postMessage';
 	$wp_customize->get_setting( 'blogdescription' )->transport  = 'postMessage';
 	$wp_customize->get_setting( 'header_textcolor' )->transport = 'postMessage';

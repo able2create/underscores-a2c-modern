@@ -10,33 +10,20 @@ on:
 
 jobs:
   lint-php:
-    name: Parallel lint
+    name: Syntax lint and PHPCS
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout the git repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: PHP setup
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: '8.4'
+          tools: composer
       - name: Install composer packages
-        run: composer install --no-progress
+        run: composer install --no-progress --no-interaction
       - name: Check for PHP errors
         run: composer lint:php
-
-  phpcs_check:
-    name: PHPCS check
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout the git repository
-        uses: actions/checkout@v2
-      - name: PHP setup
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.4
-      - name: Install composer packages
-        run: composer install --no-progress
       - name: Check coding standards using PHPCS
         run: composer lint:wpcs

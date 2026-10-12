@@ -4,9 +4,9 @@ Contributors: able2create
 Tags: accessibility-ready, custom-background, custom-logo, custom-menu, featured-images, translation-ready, one-column, two-columns
 
 Requires at least: 6.7
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 8.4
-Stable tag: 3.0.1
+Stable tag: 3.1.0
 License: GNU General Public License v2 or later
 License URI: LICENSE
 
@@ -28,11 +28,25 @@ A modernized fork of the original Underscores (_s) starter theme, updated for 20
 
 This theme is designed to work with all popular WordPress plugins. Note that inc/security.php hardens the site by default — XML-RPC and pingbacks are disabled, the core wp/v2 REST namespace is limited to logged-in users (third-party plugin REST namespaces, e.g. wp-statistics/v2, stay reachable for anonymous visitors), and file editing is disabled. Adjust inc/security.php and inc/performance.php if a plugin needs any of these.
 
-= Is it compatible with WordPress 7.0? =
+= Is it compatible with WordPress 7.1? =
 
-Yes. The theme is tested with WordPress 7.0 "Armstrong". AI Connectors, Responsive Block Visibility, Custom CSS per block and the Font Library work out of the box with no theme configuration. theme.json provides styling for the new Breadcrumbs and Icon blocks.
+Yes. The theme is tested with WordPress 7.1 "Mary Lou". The always-iframed editor is styled through editor-style.css and theme.json. Features from WordPress 7.0 "Armstrong" keep working: AI Connectors, Responsive Block Visibility, Custom CSS per block and the Font Library work out of the box with no theme configuration. theme.json provides styling for the new Breadcrumbs and Icon blocks.
 
 == Changelog ==
+
+= 3.1.0 =
+* WordPress 7.1 "Mary Lou" support
+* Fixed: REST user routes were removed for logged-in users too, breaking the block editor's author panel
+* Fixed: ?author=N leaked usernames via core's canonical redirect; author archives are now redirected before it
+* Users sitemap and author data in oEmbed responses removed; lost-password form no longer reveals existing accounts
+* Author byline no longer links to (redirected) author archives
+* Removed forced `defer` on all scripts (broke inline scripts of plugins and core); core's loading strategy is used instead
+* Removed stripping of `ver` query strings (broke cache busting after updates)
+* Global styles and block library CSS are no longer dequeued (theme.json variables were missing on pages without blocks)
+* Plugin resource hints are kept; only the core emoji DNS prefetch is removed
+* Removed code without effect: revision/autosave constants (set them in wp-config.php), speculative loading removal, lazy loading filter, classic-theme-styles dequeue
+* style.css and editor-style.css now use the theme.json palette and font families as single source
+* Development tooling: WPCS 3, PHPCompatibilityWP for PHP 8.4, CI on PHP 8.4; removed CSS/JS workflows that referenced a non-existent npm setup
 
 = 3.0.1 =
 * REST API hardening now only restricts the core wp/v2 namespace instead of blocking the whole REST API, so plugins with their own REST namespace (e.g. WP-Statistics) keep working for anonymous visitors

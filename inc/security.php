@@ -77,9 +77,13 @@ add_filter( 'rest_authentication_errors', function ( $result ) {
 } );
 
 /**
- * Disable user enumeration via REST endpoints.
+ * Disable user enumeration via REST endpoints for anonymous visitors.
+ * Logged-in users keep the routes (block editor author panel needs them).
  */
 add_filter( 'rest_endpoints', function ( array $endpoints ): array {
+	if ( is_user_logged_in() ) {
+		return $endpoints;
+	}
 	unset( $endpoints['/wp/v2/users'] );
 	unset( $endpoints['/wp/v2/users/(?P<id>[\d]+)'] );
 	return $endpoints;
@@ -102,7 +106,7 @@ add_action( 'admin_menu', function (): void {
 add_action( 'admin_init', function (): void {
 	global $pagenow;
 
-	if ( $pagenow === 'edit-comments.php' ) {
+	if ( 'edit-comments.php' === $pagenow ) {
 		wp_safe_redirect( admin_url() );
 		exit;
 	}
@@ -127,12 +131,29 @@ add_action( 'init', function (): void {
 
 /**
  * Redirect author archive pages (prevents username exposure via URL).
+ * Priority 1 runs before redirect_canonical, which would otherwise answer
+ * ?author=1 with a redirect to /author/username/.
  */
 add_action( 'template_redirect', function (): void {
-	if ( is_author() ) {
-		wp_redirect( home_url(), 301 );
+	if ( is_author() || isset( $_GET['author'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		wp_safe_redirect( home_url( '/' ), 301 );
 		exit;
 	}
+}, 1 );
+
+/**
+ * Remove the users sitemap (wp-sitemap-users-1.xml lists author slugs).
+ */
+add_filter( 'wp_sitemaps_add_provider', function ( $provider, string $name ) {
+	return 'users' === $name ? false : $provider;
+}, 10, 2 );
+
+/**
+ * Remove author name and URL from oEmbed responses.
+ */
+add_filter( 'oembed_response_data', function ( array $data ): array {
+	unset( $data['author_name'], $data['author_url'] );
+	return $data;
 } );
 
 /**
@@ -152,6 +173,19 @@ add_filter( 'body_class', function ( array $classes ): array {
  */
 add_filter( 'login_errors', function (): string {
 	return __( 'Login credentials are incorrect.', '_s' );
+} );
+
+/**
+ * Lost password: answer unknown usernames like known ones
+ * (core otherwise reveals whether an account exists).
+ */
+add_filter( 'lostpassword_errors', function ( WP_Error $errors ): WP_Error {
+	$on_login_page = 'wp-login.php' === ( $GLOBALS['pagenow'] ?? '' );
+	if ( $on_login_page && 'invalidcombo' === $errors->get_error_code() ) {
+		wp_safe_redirect( add_query_arg( 'checkemail', 'confirm', wp_login_url() ) );
+		exit;
+	}
+	return $errors;
 } );
 
 // ─── Hide WordPress Version ───────────────────────────────────────────────────
