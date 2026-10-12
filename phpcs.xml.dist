@@ -28,7 +28,7 @@
 	<!-- Check up to 8 files simultaneously. -->
 	<arg name="parallel" value="8"/>
 
-	<!-- Check PHP files only. JavaScript and CSS files are checked separately using the @wordpress/scripts package. -->
+	<!-- Check PHP files only. JavaScript and CSS files are not linted (no build process). -->
 	<arg name="extensions" value="php"/>
 
 	<!-- Check all files in this directory and the directories below it. -->
@@ -41,15 +41,23 @@
 
 	<!--
 	#############################################################################
-	USE THE WordPress AND THE Theme Review RULESET
+	USE THE WordPress RULESET
 	#############################################################################
 	-->
 
 	<rule ref="WordPress">
 		<!-- This rule does not apply here since the _s prefix should be changed by the theme author. -->
 		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed"/>
+		<!-- Theme style choices: short arrays, closures as hook callbacks, no file header DocBlocks,
+			 commented-out optional features (sidebar, comments). -->
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="PEAR.Functions.FunctionCallSignature"/>
+		<exclude name="Squiz.Commenting.FileComment"/>
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
+		<exclude name="Squiz.Commenting.BlockComment"/>
+		<exclude name="Squiz.PHP.CommentedOutCode"/>
 	</rule>
-	<rule ref="WPThemeReview"/>
+	<!-- WPThemeReview is unmaintained and incompatible with WPCS 3. -->
 
 	<!--
 	#############################################################################
@@ -61,7 +69,9 @@
 		 Multiple valid text domains can be provided as a comma-delimited list. -->
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<property name="text_domain" type="array" value="_s"/>
+			<property name="text_domain" type="array">
+				<element value="_s"/>
+			</property>
 		</properties>
 	</rule>
 
@@ -76,7 +86,7 @@
 	<!-- Set the minimum supported WP version. This is used by several sniffs.
 		 The minimum version set here should be in line with the minimum WP version
 		 as set in the "Requires at least" tag in the readme.txt file. -->
-	<config name="minimum_supported_wp_version" value="4.5"/>
+	<config name="minimum_supported_wp_version" value="6.7"/>
 
 	<rule ref="WordPress.Arrays.MultipleStatementAlignment">
 		<properties>
@@ -93,7 +103,9 @@
 		 Multiple valid prefixes can be provided as a comma-delimited list. -->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
-			<property name="prefixes" type="array" value="_s" />
+			<property name="prefixes" type="array">
+				<element value="_s"/>
+			</property>
 		</properties>
 	</rule>
 
@@ -104,7 +116,7 @@
 	#############################################################################
 	-->
 
-	<config name="testVersion" value="5.6-"/>
+	<config name="testVersion" value="8.4-"/>
 	<rule ref="PHPCompatibilityWP"/>
 
 </ruleset>
