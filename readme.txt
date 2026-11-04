@@ -1,12 +1,12 @@
 === Underscores A2C Modern ===
 
 Contributors: able2create
-Tags: accessibility-ready, custom-background, custom-logo, custom-menu, featured-images, translation-ready, one-column, two-columns
+Tags: accessibility-ready, custom-background, custom-logo, custom-menu, featured-images, translation-ready, one-column
 
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.4
-Stable tag: 3.1.1
+Stable tag: 3.1.2
 License: GNU General Public License v2 or later
 License URI: LICENSE
 
@@ -14,7 +14,7 @@ A minimal, modern WordPress starter theme. Built with PHP 8.4+, pure CSS/JS. No 
 
 == Description ==
 
-A modernized fork of the original Underscores (_s) starter theme, updated for 2025+ WordPress development. Built with PHP 8.4+, modern CSS (Custom Properties, fluid typography via theme.json), and ES6+ JavaScript — no build process required. Plugin-friendly, performance-optimized, and security-hardened out of the box.
+A modernized fork of the Underscores (_s) starter theme. PHP 8.4+, theme.json V3 and plain CSS; the only JavaScript is the Customizer live preview. inc/security.php and inc/performance.php ship hardening defaults, and comments, widget removal, frontend heartbeat and Dashicons removal can be switched off with the `_s_features` filter.
 
 == Installation ==
 
@@ -24,15 +24,20 @@ A modernized fork of the original Underscores (_s) starter theme, updated for 20
 
 == Frequently Asked Questions ==
 
-= Does this theme support any plugins? =
+= Which plugin features does the theme restrict? =
 
-This theme is designed to work with all popular WordPress plugins. Note that inc/security.php hardens the site by default — XML-RPC and pingbacks are disabled, the core wp/v2 REST namespace is limited to logged-in users (third-party plugin REST namespaces, e.g. wp-statistics/v2, stay reachable for anonymous visitors), and file editing is disabled. Adjust inc/security.php and inc/performance.php if a plugin needs any of these.
+inc/security.php disables XML-RPC, pingbacks, file editing and comments, and limits the core wp/v2 REST namespace to logged-in users. REST namespaces of plugins (for example wp-statistics/v2) stay reachable for anonymous visitors; add a namespace to the `_s_rest_blocked_namespaces` filter to restrict it. Comments, widget removal, frontend heartbeat and Dashicons removal can be turned off with the `_s_features` filter. See README.md for the details.
 
 = Is it compatible with WordPress 7.1? =
 
-Yes. The theme is tested with WordPress 7.1 "Mary Lou". The always-iframed editor is styled through editor-style.css and theme.json. Features from WordPress 7.0 "Armstrong" keep working: AI Connectors, Responsive Block Visibility, Custom CSS per block and the Font Library work out of the box with no theme configuration. theme.json provides styling for the new Breadcrumbs and Icon blocks.
+Yes, tested with WordPress 7.1. The block editor is always iframed; editor-style.css and theme.json style it. theme.json also styles the Breadcrumbs and Icon blocks.
 
 == Changelog ==
+
+= 3.1.2 =
+* Documentation: README.md and readme.txt shortened, repeated and unverifiable statements removed, FAQ now describes the actual restrictions and the `_s_features` filter
+* Removed the `two-columns` tag; the theme has no sidebar layout
+* README no longer lists specific browser versions (the old numbers did not match the CSS in use)
 
 = 3.1.1 =
 * Fixed: 404 page used widgets that the theme itself unregisters; it now renders recent posts, archives and tags directly

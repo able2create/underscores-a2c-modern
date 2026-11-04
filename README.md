@@ -1,244 +1,144 @@
-Modernized _s Starter Theme
+Underscores A2C Modern
 ===
 
-This is a **modernized fork** of the original Underscores (_s) starter theme, updated for 2025+ with:
+A modernized fork of the [Underscores](https://underscores.me) (_s) starter theme for classic PHP themes. No build process: plain PHP, CSS and one small Customizer script.
 
-- **PHP 8.4+** with type hints and modern syntax
-- **WordPress 6.7+** with theme.json V3 for modern features (tested up to 7.1)
-- **Modern CSS** - pure CSS with Custom Properties, no build process
-- **Modern JavaScript** (ES6+) without jQuery
-- **No build process required** - pure PHP, CSS, and JS
-- **Performance-optimized** - Emoji disabled, lazy loading enabled
-- **Security-hardened** - XML-RPC disabled, file editing disabled
-- **Easy installation** with included script - no manual find/replace needed
-
-What's Different in This Modern Version?
-===
-
-### Modern PHP (8.4+)
-- Full type hints on all functions (parameters and return types)
-- Array type documentation with PHPDoc generics
-- Modern PHP features throughout
-
-### Modern CSS (No Build Process!)
-- **CSS Custom Properties** (CSS Variables) for theming
-- **Modern CSS Reset** based on current best practices
-- No SASS/SCSS - pure, modern CSS that runs in all modern browsers
-
-Security and performance hardening details are covered in their own sections below, so they're not repeated here.
-
-### Modern JavaScript
-- The only shipped JavaScript is `js/customizer.js`, an ES6+ Customizer live-preview script (no jQuery)
-- No frontend JavaScript is enqueued by default, keeping the theme dependency-free
-
-### theme.json V3
-- Complete theme.json implementation
-- Color palettes and typography scales
-- Spacing and layout settings
-- Shadow presets
-- Block-specific settings
-- Fluid typography built-in
-
-WordPress 7.1 Support
-===
-
-Tested with WordPress 7.1 "Mary Lou". The block editor is now always rendered in an iframe, also for classic themes like this one. Editor styling therefore comes exclusively from `editor-style.css` (loaded via `add_editor_style()`) and the theme.json presets — CSS printed via `admin_head` or `admin_enqueue_scripts` no longer reaches the editor canvas.
-
-Features introduced in WordPress 7.0 "Armstrong" keep working:
-
-- **AI Connectors** — works out of the box. The connection is configured under *Settings » Connectors*; no theme configuration is required. To disable AI support site-wide, add `define( 'WP_AI_SUPPORT', false );` to `wp-config.php`.
-- **Responsive Block Visibility** — show/hide blocks per device directly in the block inspector; handled by core, no theme CSS needed.
-- **Custom CSS per block** — available in the block inspector's Advanced panel; no theme setup required.
-- **Font Library** — now available for classic themes like this one; manage and install fonts from the dashboard.
-- **New core blocks** — `theme.json` provides matching styles for the new **Breadcrumbs** and **Icon** blocks, and adds block-level `:hover`/`:focus` states for the **Navigation** block.
-
-Features
-===
-
-* Clean, semantic HTML5 templates
-* Custom header and logo support
-* Primary and footer navigation menus via `wp_nav_menu()` (single level, wrapping layout)
-* Custom template tags for common functions
-* Performance-optimized asset loading
-* Gallery layouts with CSS Grid that reduce their column count on small screens
-* Plugin-friendly (security hardening kept compatible with popular plugins)
-* Translation-ready with `.pot` file
-* Security-hardened and performance-optimized out of the box
-* Licensed under GPLv2 or later
+- PHP 8.4+ with type hints on all named functions
+- `theme.json` V3 (color palette, fluid font sizes, spacing, shadows, block settings)
+- Plain CSS with Custom Properties, no SASS and no frontend JavaScript
+- Security and performance defaults in `inc/security.php` and `inc/performance.php`, partly switchable (see [Opinionated defaults](#opinionated-defaults))
+- Install script that renames the theme for you
 
 Requirements
 ---------------
 
-- **PHP 8.4+**
-- **WordPress 6.7+** (tested up to 7.1)
-- Composer (optional, for development tools only)
+- PHP 8.4+
+- WordPress 6.7+ (tested up to 7.1)
+- Composer, optional and only for the lint tools
 
-No Node.js, no build process, no compilation required!
+WordPress 7.1
+---------------
+
+The block editor is always rendered in an iframe, also for classic themes. Editor styling therefore comes only from `editor-style.css` (loaded via `add_editor_style()`) and the `theme.json` presets. CSS printed via `admin_head` or `admin_enqueue_scripts` does not reach the editor canvas.
+
+`theme.json` also styles the Breadcrumbs and Icon blocks and adds `:hover`/`:focus` states for the Navigation block.
 
 Installation
 ---------------
 
-### Easy Installation with Script
-
-Use the included installation script for automatic setup:
+With the install script:
 
 ```bash
 ./install-theme.sh sundp "a2c - Theme" "Martin" "https://able2create.com"
 ```
 
-Replace with your own values:
-- `sundp` - Your theme slug
-- `"a2c - Theme"` - Your theme name
-- `"Martin"` - Author name
-- `"https://able2create.com"` - Author URL
+Arguments: theme slug, theme name, author name, author URL. The script copies the files, replaces the placeholders and renames files. More detail in [INSTALL.md](INSTALL.md).
 
-The script will automatically:
-- Copy files to the correct location
-- Replace all placeholders
-- Rename files appropriately
+Manually: copy the theme to `wp-content/themes/your-theme-name/`, then
 
-See [INSTALL.md](INSTALL.md) for detailed installation instructions and manual setup.
+- replace `'_s'` with `'your-theme-slug'` and `_s_` with `your_theme_slug_`
+- update the `style.css` header
+- activate it in the admin or with `wp theme activate your-theme-slug`
 
-### Quick Manual Installation
+Customizing
+---------------
 
-1. Clone or download this repository
-2. Run the install script (see above) OR
-3. Manually copy to `wp-content/themes/your-theme-name/` and do find/replace:
-   - `'_s'` → `'your-theme-slug'`
-   - `_s_` → `your_theme_slug_`
-   - Update `style.css` header
-4. Activate via WordPress admin or `wp theme activate your-theme-slug`
+Colors, typography, spacing, shadows and layout are set in `theme.json`. The CSS Custom Properties in `style.css` (`:root`) read from those presets.
 
-### Customizing Colors and Typography
-
-Edit the `theme.json` file to customize:
-- Color palettes
-- Typography scales
-- Spacing values
-- Shadow presets
-- Layout settings
-
-CSS Custom Properties are defined in `style.css` under `:root` and can be customized there as well.
-
-### Development Tools (Optional)
-
-Install Composer dependencies for development tools:
+Development tools
+---------------
 
 ```sh
 composer install
+composer lint:wpcs   # WordPress Coding Standards
+composer lint:php    # PHP syntax
+composer make-pot    # regenerate languages/_s.pot (needs WP-CLI)
 ```
 
-Available commands:
-- `composer lint:wpcs` - Check PHP against WordPress Coding Standards
-- `composer lint:php` - Check PHP syntax
-- `composer make-pot` - Generate translation file
-
-No npm, no webpack, no build process needed!
-
-Browser Support
+Browser support
 ---------------
 
-This theme uses modern CSS and JavaScript features. It supports:
-- Chrome/Edge 88+
-- Firefox 87+
-- Safari 14+
-
-For older browser support, you may need to add polyfills or transpilation.
-
-Plugin Compatibility
----------------
-
-This theme works with all popular WordPress plugins. It ships security- and performance-hardened by default — see the [Security](#security) section below for what's restricted. Opinionated defaults can be switched off without editing theme files, see [Disabling opinionated defaults](#disabling-opinionated-defaults).
-
-One exception worth calling out: the REST API restriction only applies to the core `wp/v2` namespace. Plugins with their own REST namespace (e.g. WP-Statistics' `wp-statistics/v2`) stay reachable for anonymous visitors without any changes.
+Current versions of Chrome, Edge, Firefox and Safari. The CSS uses Custom Properties, Grid and Flexbox `gap`; there is no polyfill or transpilation.
 
 Performance
 ---------------
 
-Built-in performance features:
+`inc/performance.php`:
 - Emoji scripts and jQuery Migrate removed
 - Emoji DNS prefetch removed (resource hints added by plugins are kept)
-- Dashicons dequeued for logged-out visitors, heartbeat disabled on the frontend
-- Minimal CSS and JS (no frameworks, no jQuery dependency)
+- Dashicons not loaded for logged-out visitors
+- Heartbeat API disabled on the frontend
 
 Left to WordPress core on purpose, because overriding it breaks plugins:
-- Script loading strategy (`defer`/`async`) — register scripts with the `strategy` argument instead of forcing `defer` on every script
-- `ver` query strings — they are the cache busting after updates
-- Block and global styles — loaded on demand by core; `global-styles` holds the theme.json CSS variables used by `style.css`
-- Speculative loading (WordPress 6.8+) — free prefetching of likely next pages
+- Script loading strategy: register scripts with the `strategy` argument instead of forcing `defer` on every script
+- `ver` query strings: they are the cache busting after updates
+- Block and global styles: `global-styles` holds the `theme.json` CSS variables used by `style.css`
+- Speculative loading (WordPress 6.8+)
 
-Post revisions and autosave interval belong in `wp-config.php` (`WP_POST_REVISIONS`, `AUTOSAVE_INTERVAL`); core defines both before the theme loads.
+Revisions and autosave interval belong in `wp-config.php` (`WP_POST_REVISIONS`, `AUTOSAVE_INTERVAL`).
 
 Security
 ---------------
 
-Security hardening enabled by default (`inc/security.php`):
-- Security headers: X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
-- WordPress version hidden; generator and unnecessary `<head>` meta tags removed
-- Login error messages sanitized
+`inc/security.php`:
+- Headers: X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy. HSTS and Content-Security-Policy are left to the server or CDN.
+- WordPress version, generator and unnecessary `<head>` tags removed
+- Generic login error message
 - XML-RPC and pingbacks disabled
-- Core `wp/v2` REST namespace limited to logged-in users. Other REST namespaces (e.g. a plugin's own `plugin-slug/v1`) stay open for anonymous requests unless added to the `_s_rest_blocked_namespaces` filter
-- User enumeration blocked: REST user routes (anonymous only — the editor keeps them), `?author=N` and author archives, users sitemap, author data in oEmbed, and the lost-password form no longer reveals whether an account exists
 - File editing disabled (`DISALLOW_FILE_EDIT`)
-- Comments disabled site-wide (switchable, see below)
+- Comments disabled site-wide
+- Core `wp/v2` REST namespace limited to logged-in users. Other namespaces, such as a plugin's `wp-statistics/v2`, stay reachable for anonymous visitors. To restrict another namespace:
+  ```php
+  add_filter( '_s_rest_blocked_namespaces', fn( array $ns ): array => [ ...$ns, 'some-plugin/v1' ] );
+  ```
+- User enumeration blocked: anonymous REST user routes, numeric `?author=N` and author archives, users sitemap, author data in oEmbed, and the lost-password form no longer reveals whether an account exists
 
-HSTS and a Content-Security-Policy are intentionally not set by the theme; configure them at server or CDN level, where they can match your hosting and plugins.
-
-To loosen any of these for a specific plugin, edit `inc/security.php` directly.
-
-Disabling opinionated defaults
+Opinionated defaults
 ---------------
 
-Four defaults often collide with plugins and can be turned off through the `_s_features` filter, for example in a small plugin or a child theme:
+Four defaults can be switched off with the `_s_features` filter, for example in a small plugin or a child theme:
 
 ```php
 add_filter( '_s_features', fn( array $features ): array => [
 	...$features,
-	'disable_comments'  => false, // comments and pingbacks stay available
-	'disable_heartbeat' => false, // keep the Heartbeat API on the frontend
+	'disable_comments'  => false,
+	'disable_heartbeat' => false,
 ] );
 ```
 
-Available keys (all `true` by default):
-- `disable_comments` - comments, pingbacks and the comments admin screens are disabled
-- `remove_widgets` - unused core widgets (Archives, Calendar, Categories, Meta, Recent Comments, Recent Posts, RSS, Tag Cloud) are unregistered
-- `disable_heartbeat` - Heartbeat API is deregistered on the frontend
-- `remove_dashicons` - Dashicons are not loaded for logged-out visitors
+All keys are `true` by default:
+- `disable_comments`: comments, pingbacks and the comments admin screens are disabled
+- `remove_widgets`: Archives, Calendar, Categories, Meta, Recent Comments, Recent Posts, RSS and Tag Cloud widgets are unregistered
+- `disable_heartbeat`: Heartbeat API is deregistered on the frontend
+- `remove_dashicons`: Dashicons are not loaded for logged-out visitors
 
-File Structure
+Everything else can be changed in `inc/security.php` and `inc/performance.php` directly.
+
+File structure
 ---------------
 
 ```
 _s/
 ├── inc/
-│   ├── custom-header.php      # Custom header implementation
-│   ├── customizer.php         # Theme customizer settings
-│   ├── template-tags.php      # Custom template tags
-│   ├── template-functions.php # Template helper functions
-│   ├── performance.php        # Performance optimizations
-│   └── security.php           # Security hardening
+│   ├── custom-header.php      # Custom header
+│   ├── customizer.php         # Customizer settings
+│   ├── template-tags.php      # Template tags
+│   ├── template-functions.php # Template helpers
+│   ├── performance.php        # Performance defaults
+│   └── security.php           # Security defaults
 ├── js/
-│   └── customizer.js          # Customizer preview JS
-├── template-parts/           # Template part files
-├── functions.php             # Theme functions
-├── style.css                 # Main stylesheet
-├── install-theme.sh          # Easy installation script
-├── INSTALL.md                # Detailed installation guide
-├── theme.json                # Theme configuration (V3)
-├── *.php                     # Template files
-└── README.md                 # This file
+│   └── customizer.js          # Customizer live preview (only JS in the theme)
+├── template-parts/            # Template parts
+├── functions.php              # Theme setup
+├── style.css                  # Stylesheet
+├── editor-style.css           # Block editor styles
+├── theme.json                 # Theme configuration (V3)
+├── install-theme.sh           # Install script
+├── INSTALL.md                 # Installation guide
+└── *.php                      # Templates
 ```
-
-Contributing
----------------
-
-This is a modernized fork. For the original Underscores project, visit [underscores.me](https://underscores.me).
 
 License
 ---------------
 
-This theme, like WordPress, is licensed under the GPL v2 or later.
-
-Use it to make something cool, have fun, and share what you've learned.
-
-_s is based on Underscores https://underscores.me/, (C) 2012-2025 Automattic, Inc.
+GPL v2 or later, like WordPress. Based on Underscores https://underscores.me/, (C) 2012-2025 Automattic, Inc.
