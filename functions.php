@@ -9,14 +9,14 @@
  */
 
 if ( ! defined( '_S_VERSION' ) ) {
-	define( '_S_VERSION', '3.1.2' );
+	define( '_S_VERSION', '3.1.3' );
 }
 
 /**
  * Whether one of the theme's opinionated defaults is active.
  *
  * Available features (all enabled by default):
- * - disable_comments:  comments/pingbacks off site-wide (inc/security.php)
+ * - disable_comments:  comments/trackbacks off site-wide; XML-RPC pingbacks stay off (inc/security.php)
  * - remove_widgets:    unused core widgets unregistered (functions.php)
  * - disable_heartbeat: Heartbeat API off on the frontend (inc/performance.php)
  * - remove_dashicons:  Dashicons not loaded for logged-out visitors (inc/performance.php)

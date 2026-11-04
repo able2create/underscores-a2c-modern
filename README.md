@@ -107,7 +107,7 @@ add_filter( '_s_features', fn( array $features ): array => [
 ```
 
 All keys are `true` by default:
-- `disable_comments`: comments, pingbacks and the comments admin screens are disabled
+- `disable_comments`: comments, trackbacks and the comments admin screens are disabled. XML-RPC stays off either way, so pingbacks are not received; to allow them, remove the XML-RPC and `pingback.ping` filters in `inc/security.php`
 - `remove_widgets`: Archives, Calendar, Categories, Meta, Recent Comments, Recent Posts, RSS and Tag Cloud widgets are unregistered
 - `disable_heartbeat`: Heartbeat API is deregistered on the frontend
 - `remove_dashicons`: Dashicons are not loaded for logged-out visitors

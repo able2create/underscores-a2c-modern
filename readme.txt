@@ -6,7 +6,7 @@ Tags: accessibility-ready, custom-background, custom-logo, custom-menu, featured
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.4
-Stable tag: 3.1.2
+Stable tag: 3.1.3
 License: GNU General Public License v2 or later
 License URI: LICENSE
 
@@ -33,6 +33,9 @@ inc/security.php disables XML-RPC, pingbacks, file editing and comments, and lim
 Yes, tested with WordPress 7.1. The block editor is always iframed; editor-style.css and theme.json style it. theme.json also styles the Breadcrumbs and Icon blocks.
 
 == Changelog ==
+
+= 3.1.3 =
+* Documentation: the `disable_comments` switch does not bring back XML-RPC pingbacks, since XML-RPC is disabled separately in inc/security.php
 
 = 3.1.2 =
 * Documentation: README.md and readme.txt shortened, repeated and unverifiable statements removed, FAQ now describes the actual restrictions and the `_s_features` filter
