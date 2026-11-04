@@ -1,64 +1,37 @@
-# Schnellstart Installation
+# Schnellstart
 
-## Auf dem Server (per SSH)
+Auf dem Server per SSH, im WordPress-Verzeichnis. Voraussetzungen: PHP 8.4+, WordPress 6.7+, `git`, `perl`.
 
-### Schritt 1: Theme klonen
+## Schritte
+
 ```bash
 cd wp-content/themes/
 git clone https://github.com/able2create/underscores-a2c-modern.git _s
 cd _s
-```
-
-### Schritt 2: Setup ausführen
-```bash
 ./setup.sh sundp "a2c - Theme" "Martin" "https://able2create.com"
-```
-
-Das Script fragt am Ende:
-- **Clean up development files?** → `y` eingeben
-- Entfernt automatisch: .git, .github, README, composer.json, etc.
-- Nur Theme-Dateien bleiben übrig (keine Git-History, keine gelben Markierungen in VSCode)
-
-### Schritt 3: Verzeichnis umbenennen
-```bash
-cd ..
-mv _s sundp
-```
-
-### Schritt 4: Theme aktivieren
-```bash
+cd .. && mv _s sundp
 wp theme activate sundp
 ```
 
-## Das war's! 🎉
+`setup.sh` fragt zweimal nach (weiterfahren, Entwicklungsdateien löschen). Mit `-y` als fünftem Argument werden beide Fragen mit Ja beantwortet. Das Aufräumen entfernt `.git`, `.github`, die Dokumentation, `composer.json`, `phpcs.xml.dist` und die Install-Skripte.
 
-Die Theme ist jetzt installiert und aktiviert mit:
-- Theme Name: **a2c - Theme**
-- Theme Slug: **sundp**
-- Author: **Martin**
-- Author URI: **https://able2create.com**
-
-Alle `_s` Platzhalter wurden durch `sundp` ersetzt.
-
-## Alternative: Alles in einem Befehl
+Alles in einem Befehl:
 
 ```bash
 cd wp-content/themes/ && \
 git clone https://github.com/able2create/underscores-a2c-modern.git _s && \
 cd _s && \
-./setup.sh sundp "a2c - Theme" "Martin" "https://able2create.com" && \
-cd .. && \
-mv _s sundp && \
+./setup.sh sundp "a2c - Theme" "Martin" "https://able2create.com" -y && \
+cd .. && mv _s sundp && \
 wp theme activate sundp
 ```
 
-## Was macht das setup.sh Script?
+## Was das Skript ersetzt
 
-- Ersetzt `'_s'` → `'sundp'` (Text Domain)
-- Ersetzt `_s_` → `sundp_` (Function Prefix)
-- Ersetzt `_s-` → `sundp-` (Handles)
-- Ersetzt `_S_` → `SUNDP_` (Constants)
-- Aktualisiert style.css Header (Theme Name, Author, etc.)
-- Benennt languages/_s.pot → languages/sundp.pot um
+- `'_s'` wird zur Text Domain `sundp`
+- `_s_` wird zum Funktionspräfix `sundp_` (auch bei den Filtern, z. B. `sundp_features`)
+- `_s-` wird zu `sundp-` (Handles), `_S_` zu `SUNDP_` (Konstanten)
+- der `style.css`-Header (Theme Name, Author, Author URI, Text Domain)
+- `languages/_s.pot` wird zu `languages/sundp.pot`
 
-Alle Änderungen werden **direkt** in den Dateien vorgenommen - kein Kopieren nötig!
+Ausführliche Anleitung, auch für die manuelle Installation: [INSTALL.md](INSTALL.md) (nur ohne Aufräumen vorhanden).

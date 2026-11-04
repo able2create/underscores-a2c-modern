@@ -1,100 +1,50 @@
-# Installation Guide
+# Installation
 
-## Quick Installation with Script
+Requirements: PHP 8.4+, WordPress 6.7+, `perl` and `tar` (present on practically every Linux/macOS host). WP-CLI is optional.
 
-1. Download or clone this theme to your local machine
-2. Run the installation script:
+Both scripts replace the `_s` placeholders (text domain, function prefix, constants, style handles) with your theme slug. A German-language installation needs nothing extra, but the theme ships no translation: its few frontend strings stay English until you add a `.po/.mo` for your text domain.
 
-```bash
-./install-theme.sh sundp "a2c - Theme" "Martin" "https://able2create.com"
-```
+## Option 1: install-theme.sh (copy into a WordPress install)
 
-This will:
-- Copy the theme to your WordPress themes directory
-- Replace all placeholders with your theme details
-- Rename files appropriately
-
-## Manual Installation
-
-### Step 1: Copy Theme Files
-
-Copy this directory to `wp-content/themes/your-theme-name/`
-
-### Step 2: Find and Replace
-
-Replace the following placeholders throughout all files:
-
-1. **Text Domain**: `'_s'` → `'your-theme-slug'`
-2. **Function Prefix**: `_s_` → `your_theme_slug_`
-3. **Text Domain (CSS)**: `Text Domain: _s` → `Text Domain: your-theme-slug`
-4. **DocBlocks**: ` _s` → ` Your_Theme_Name`
-5. **Handles**: `_s-` → `your-theme-slug-`
-6. **Constants**: `_S_` → `YOUR_THEME_SLUG_`
-
-### Step 3: Update Theme Info
-
-Edit `style.css` header:
-- Theme Name
-- Author
-- Author URI
-- Description (optional)
-
-### Step 4: Activate Theme
-
-Via WP-CLI:
-```bash
-wp theme activate your-theme-slug
-```
-
-Or via WordPress Admin:
-- Go to Appearance → Themes
-- Click "Activate" on your theme
-
-## WP-CLI Alternative (Without Script)
-
-If you prefer using WP-CLI directly, you can do:
+Run from the WordPress root, with the theme repository checked out anywhere:
 
 ```bash
-# Navigate to your WordPress installation
-cd /path/to/wordpress
-
-# Copy the theme
-cp -r /path/to/_s wp-content/themes/sundp
-
-# Then manually do the find/replace operations
-# OR use the install-theme.sh script from the theme directory
+/path/to/underscores-a2c-modern/install-theme.sh sundp "a2c - Theme" "Martin" "https://able2create.com"
 ```
 
-## Post-Installation
+Arguments: theme slug (lowercase letters, digits, hyphens), theme name, author, author URL. Add `-y` as a fifth argument to skip the confirmation. If `WP_THEMES_DIR` is set it is used instead of `wp-content/themes`.
 
-1. **Customize theme.json**
-   - Edit colors, typography, spacing to match your brand
+The script copies the theme to `wp-content/themes/<slug>` (without `.git`, `.github`, `vendor`, `README.md`, composer files and the install scripts), replaces the placeholders, sets the `style.css` header, renames `languages/_s.pot`, and runs `wp theme activate <slug>` if WP-CLI is available. It refuses to run if the target directory already exists and is not empty.
 
-2. **Edit CSS Variables**
-   - Open `style.css` and modify `:root` variables
+## Option 2: setup.sh (in place, on the server)
 
-3. **Enable Optional Features**
-   - Uncomment sidebar registration in `functions.php` if needed
-   - Uncomment comment reply script if you need threaded comments
-   - Review `inc/security.php` and `inc/performance.php` for optional features
+```bash
+cd wp-content/themes/
+git clone https://github.com/able2create/underscores-a2c-modern.git _s
+cd _s
+./setup.sh sundp "a2c - Theme" "Martin" "https://able2create.com"
+cd .. && mv _s sundp
+wp theme activate sundp
+```
 
-4. **Security Hardening (Optional)**
-   - Uncomment XML-RPC disable in `inc/security.php` if you don't need it
-   - Uncomment file editing disable for production sites
-   - Uncomment emoji disable in `inc/performance.php` for better performance
+`setup.sh` modifies the files in the directory it lives in. It asks to continue and whether to remove development files (`.git`, `.github`, docs, `composer.json`, `phpcs.xml.dist`, the install scripts); `-y` as a fifth argument answers both with yes. The directory name must match the slug, so rename it afterwards as shown.
 
-## Requirements
+## Manual installation
 
-- PHP 8.4+
-- WordPress 6.4+
-- Modern browser (Chrome 88+, Firefox 87+, Safari 14+)
+1. Copy the theme to `wp-content/themes/your-theme-slug/`.
+2. Replace in all `.php`, `.css`, `.js` and `.json` files:
+   - `'_s'` and `"_s"` with `'your-theme-slug'` (text domain)
+   - `_s_` with `your_theme_slug_` (function and filter prefix)
+   - `_S_` with `YOUR_THEME_SLUG_` (constants)
+   - `_s-` with `your-theme-slug-` (style and script handles)
+   - `@package _s` with `@package your-theme-slug`
+3. Edit the `style.css` header: Theme Name, Author, Author URI, Text Domain.
+4. Rename `languages/_s.pot` to `languages/your-theme-slug.pot`.
+5. Activate it in the admin (Appearance > Themes) or with `wp theme activate your-theme-slug`.
 
-## No Build Process Required!
+## After installing
 
-This theme doesn't need npm, webpack, or any build tools. Just:
-1. Install
-2. Customize
-3. Activate
-4. Start building!
-
-All CSS and JavaScript work out of the box.
+- The prefix replacement also renames the theme's filters: `_s_features` becomes `sundp_features` and `_s_rest_blocked_namespaces` becomes `sundp_rest_blocked_namespaces`. The README describes them under their original names.
+- Colors, typography, spacing and layout are set in `theme.json`.
+- The security and performance defaults in `inc/security.php` and `inc/performance.php` are active from the start. Comments, widget removal, frontend heartbeat and Dashicons removal can be switched off with the features filter (see the README).
+- Run `composer install` only if you want the lint tools (`composer lint:wpcs`, `composer lint:php`).
