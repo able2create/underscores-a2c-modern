@@ -14,9 +14,24 @@ get_header();
 
 					<?php
 					get_search_form();
-
-					the_widget( 'WP_Widget_Recent_Posts' );
 					?>
+
+					<div class="widget widget_recent_entries">
+						<h2 class="widget-title"><?php esc_html_e( 'Recent Posts', '_s' ); ?></h2>
+						<ul>
+							<?php
+							$_s_recent_posts = get_posts(
+								array(
+									'numberposts'         => 5,
+									'ignore_sticky_posts' => true,
+								)
+							);
+							foreach ( $_s_recent_posts as $_s_recent_post ) :
+								?>
+								<li><a href="<?php echo esc_url( get_permalink( $_s_recent_post ) ); ?>"><?php echo esc_html( get_the_title( $_s_recent_post ) ); ?></a></li>
+							<?php endforeach; ?>
+						</ul>
+					</div><!-- .widget -->
 
 					<div class="widget widget_categories">
 						<h2 class="widget-title"><?php esc_html_e( 'Most Used Categories', '_s' ); ?></h2>
@@ -35,13 +50,25 @@ get_header();
 						</ul>
 					</div><!-- .widget -->
 
-					<?php
-					/* translators: %1$s: smiley */
-					$_s_archive_content = '<p>' . sprintf( esc_html__( 'Try looking in the monthly archives. %1$s', '_s' ), convert_smilies( ':)' ) ) . '</p>';
-					the_widget( 'WP_Widget_Archives', 'dropdown=1', "after_title=</h2>$_s_archive_content" );
+					<div class="widget widget_archive">
+						<h2 class="widget-title"><?php esc_html_e( 'Archives', '_s' ); ?></h2>
+						<p><?php esc_html_e( 'Try looking in the monthly archives.', '_s' ); ?></p>
+						<ul>
+							<?php
+							wp_get_archives(
+								array(
+									'type'  => 'monthly',
+									'limit' => 12,
+								)
+							);
+							?>
+						</ul>
+					</div><!-- .widget -->
 
-					the_widget( 'WP_Widget_Tag_Cloud' );
-					?>
+					<div class="widget widget_tag_cloud">
+						<h2 class="widget-title"><?php esc_html_e( 'Tags', '_s' ); ?></h2>
+						<?php wp_tag_cloud(); ?>
+					</div><!-- .widget -->
 
 			</div><!-- .page-content -->
 		</section><!-- .error-404 -->

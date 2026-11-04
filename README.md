@@ -57,10 +57,10 @@ Features
 
 * Clean, semantic HTML5 templates
 * Custom header and logo support
-* Single-level navigation menu via `wp_nav_menu()`
+* Primary and footer navigation menus via `wp_nav_menu()` (single level, wrapping layout)
 * Custom template tags for common functions
 * Performance-optimized asset loading
-* Modern responsive grid layouts using CSS Grid
+* Gallery layouts with CSS Grid that reduce their column count on small screens
 * Plugin-friendly (security hardening kept compatible with popular plugins)
 * Translation-ready with `.pot` file
 * Security-hardened and performance-optimized out of the box
@@ -148,7 +148,7 @@ For older browser support, you may need to add polyfills or transpilation.
 Plugin Compatibility
 ---------------
 
-This theme works with all popular WordPress plugins. It ships security- and performance-hardened by default — see the [Security](#security) section below for what's restricted and how to adjust `inc/security.php` / `inc/performance.php` if a plugin needs a disabled feature re-enabled.
+This theme works with all popular WordPress plugins. It ships security- and performance-hardened by default — see the [Security](#security) section below for what's restricted. Opinionated defaults can be switched off without editing theme files, see [Disabling opinionated defaults](#disabling-opinionated-defaults).
 
 One exception worth calling out: the REST API restriction only applies to the core `wp/v2` namespace. Plugins with their own REST namespace (e.g. WP-Statistics' `wp-statistics/v2`) stay reachable for anonymous visitors without any changes.
 
@@ -180,9 +180,30 @@ Security hardening enabled by default (`inc/security.php`):
 - Core `wp/v2` REST namespace limited to logged-in users. Other REST namespaces (e.g. a plugin's own `plugin-slug/v1`) stay open for anonymous requests unless added to the `_s_rest_blocked_namespaces` filter
 - User enumeration blocked: REST user routes (anonymous only — the editor keeps them), `?author=N` and author archives, users sitemap, author data in oEmbed, and the lost-password form no longer reveals whether an account exists
 - File editing disabled (`DISALLOW_FILE_EDIT`)
-- Comments disabled site-wide
+- Comments disabled site-wide (switchable, see below)
+
+HSTS and a Content-Security-Policy are intentionally not set by the theme; configure them at server or CDN level, where they can match your hosting and plugins.
 
 To loosen any of these for a specific plugin, edit `inc/security.php` directly.
+
+Disabling opinionated defaults
+---------------
+
+Four defaults often collide with plugins and can be turned off through the `_s_features` filter, for example in a small plugin or a child theme:
+
+```php
+add_filter( '_s_features', fn( array $features ): array => [
+	...$features,
+	'disable_comments'  => false, // comments and pingbacks stay available
+	'disable_heartbeat' => false, // keep the Heartbeat API on the frontend
+] );
+```
+
+Available keys (all `true` by default):
+- `disable_comments` - comments, pingbacks and the comments admin screens are disabled
+- `remove_widgets` - unused core widgets (Archives, Calendar, Categories, Meta, Recent Comments, Recent Posts, RSS, Tag Cloud) are unregistered
+- `disable_heartbeat` - Heartbeat API is deregistered on the frontend
+- `remove_dashicons` - Dashicons are not loaded for logged-out visitors
 
 File Structure
 ---------------

@@ -91,20 +91,36 @@ add_filter( 'rest_endpoints', function ( array $endpoints ): array {
 
 // ─── Comments ─────────────────────────────────────────────────────────────────
 
-add_filter( 'comments_open', '__return_false', 20, 2 );
-add_filter( 'pings_open', '__return_false', 20, 2 );
-add_filter( 'comments_array', '__return_empty_array', 10, 2 );
+// Switch off with: add_filter( '_s_features', fn( $f ) => [ ...$f, 'disable_comments' => false ] );
 
-add_filter( 'comments_template', function (): string {
-	return get_template_directory() . '/comments-disabled.php';
+add_filter( 'comments_open', function ( bool $open ): bool {
+	return _s_feature_enabled( 'disable_comments' ) ? false : $open;
+}, 20 );
+
+add_filter( 'pings_open', function ( bool $open ): bool {
+	return _s_feature_enabled( 'disable_comments' ) ? false : $open;
+}, 20 );
+
+add_filter( 'comments_array', function ( array $comments ): array {
+	return _s_feature_enabled( 'disable_comments' ) ? array() : $comments;
+} );
+
+add_filter( 'comments_template', function ( string $template ): string {
+	return _s_feature_enabled( 'disable_comments' ) ? get_template_directory() . '/comments-disabled.php' : $template;
 }, 20 );
 
 add_action( 'admin_menu', function (): void {
-	remove_menu_page( 'edit-comments.php' );
+	if ( _s_feature_enabled( 'disable_comments' ) ) {
+		remove_menu_page( 'edit-comments.php' );
+	}
 } );
 
 add_action( 'admin_init', function (): void {
 	global $pagenow;
+
+	if ( ! _s_feature_enabled( 'disable_comments' ) ) {
+		return;
+	}
 
 	if ( 'edit-comments.php' === $pagenow ) {
 		wp_safe_redirect( admin_url() );
@@ -122,7 +138,7 @@ add_action( 'admin_init', function (): void {
 } );
 
 add_action( 'init', function (): void {
-	if ( is_admin_bar_showing() ) {
+	if ( _s_feature_enabled( 'disable_comments' ) && is_admin_bar_showing() ) {
 		remove_action( 'admin_bar_menu', 'wp_admin_bar_comments_menu', 60 );
 	}
 } );
@@ -135,7 +151,9 @@ add_action( 'init', function (): void {
  * ?author=1 with a redirect to /author/username/.
  */
 add_action( 'template_redirect', function (): void {
-	if ( is_author() || isset( $_GET['author'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	// Only numeric ?author=N is the enumeration vector; other values belong to plugins.
+	$author_param = isset( $_GET['author'] ) ? sanitize_text_field( wp_unslash( $_GET['author'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( is_author() || is_numeric( $author_param ) ) {
 		wp_safe_redirect( home_url( '/' ), 301 );
 		exit;
 	}

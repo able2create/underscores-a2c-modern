@@ -46,7 +46,7 @@ add_action( 'wp_default_scripts', function ( $scripts ): void {
  * Disable dashicons on frontend for non-logged-in users.
  */
 add_action( 'wp_enqueue_scripts', function (): void {
-	if ( ! is_user_logged_in() ) {
+	if ( _s_feature_enabled( 'remove_dashicons' ) && ! is_user_logged_in() ) {
 		wp_dequeue_style( 'dashicons' );
 		wp_deregister_style( 'dashicons' );
 	}
@@ -66,7 +66,7 @@ add_action( 'wp_footer', function (): void {
  * Remove this if a plugin needs heartbeat on the frontend (live chat, LMS, ...).
  */
 add_action( 'init', function (): void {
-	if ( ! is_admin() ) {
+	if ( _s_feature_enabled( 'disable_heartbeat' ) && ! is_admin() ) {
 		wp_deregister_script( 'heartbeat' );
 	}
 } );

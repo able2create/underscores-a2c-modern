@@ -4,7 +4,7 @@ Theme URI: https://github.com/able2create/underscores-a2c-modern
 Author: Automattic
 Author URI: https://automattic.com/
 Description: A minimal, modern WordPress starter theme. Built with PHP 8.4+, pure CSS/JS. No build process. Plugin-friendly. Based on Underscores.
-Version: 3.1.0
+Version: 3.1.1
 Tested up to: 7.1
 Requires at least: 6.7
 Requires PHP: 8.4
@@ -263,9 +263,25 @@ textarea {
 	padding: 0;
 }
 
-.main-navigation li {
+.main-navigation ul,
+.footer-navigation ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+}
+
+.main-navigation li,
+.footer-navigation li {
+	margin: 0;
+}
+
+.footer-navigation {
+	margin-bottom: 16px;
+}
+
+.footer-navigation a {
 	display: inline-block;
-	margin: 0 16px 0 0;
+	padding: 4px 0;
 }
 
 .main-navigation a {
@@ -393,6 +409,24 @@ textarea {
 .gallery-columns-4 { grid-template-columns: repeat(4, 1fr); }
 .gallery-columns-5 { grid-template-columns: repeat(5, 1fr); }
 .gallery-columns-6 { grid-template-columns: repeat(6, 1fr); }
+
+@media (max-width: 782px) {
+	.gallery-columns-4,
+	.gallery-columns-5,
+	.gallery-columns-6 { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 480px) {
+	.main-navigation ul {
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.gallery-columns-3,
+	.gallery-columns-4,
+	.gallery-columns-5,
+	.gallery-columns-6 { grid-template-columns: repeat(2, 1fr); }
+}
 
 /*--------------------------------------------------------------
 # Accessibility
