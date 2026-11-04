@@ -35,7 +35,7 @@ add_action( 'customize_register', '_s_customize_register' );
  *
  * @return void
  */
-function _s_customize_partial_blogname() {
+function _s_customize_partial_blogname(): void {
 	bloginfo( 'name' );
 }
 
@@ -44,7 +44,7 @@ function _s_customize_partial_blogname() {
  *
  * @return void
  */
-function _s_customize_partial_blogdescription() {
+function _s_customize_partial_blogdescription(): void {
 	bloginfo( 'description' );
 }
 

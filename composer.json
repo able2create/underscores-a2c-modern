@@ -12,8 +12,8 @@
     "license": "GPL-2.0-or-later",
     "authors": [
         {
-            "name": "Contributors",
-            "homepage": "https://github.com/Automattic/_s/graphs/contributors"
+            "name": "able2create",
+            "homepage": "https://github.com/able2create/underscores-a2c-modern"
         }
     ],
     "require": {

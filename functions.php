@@ -9,7 +9,35 @@
  */
 
 if ( ! defined( '_S_VERSION' ) ) {
-	define( '_S_VERSION', '3.1.0' );
+	define( '_S_VERSION', '3.1.1' );
+}
+
+/**
+ * Whether one of the theme's opinionated defaults is active.
+ *
+ * Available features (all enabled by default):
+ * - disable_comments:  comments/pingbacks off site-wide (inc/security.php)
+ * - remove_widgets:    unused core widgets unregistered (functions.php)
+ * - disable_heartbeat: Heartbeat API off on the frontend (inc/performance.php)
+ * - remove_dashicons:  Dashicons not loaded for logged-out visitors (inc/performance.php)
+ *
+ * Turn one off, e.g. from a plugin or child theme:
+ *   add_filter( '_s_features', fn( array $features ): array => [ ...$features, 'disable_comments' => false ] );
+ *
+ * @param string $feature Feature key.
+ */
+function _s_feature_enabled( string $feature ): bool {
+	$features = apply_filters(
+		'_s_features',
+		array(
+			'disable_comments'  => true,
+			'remove_widgets'    => true,
+			'disable_heartbeat' => true,
+			'remove_dashicons'  => true,
+		)
+	);
+
+	return ! empty( $features[ $feature ] );
 }
 
 /**
@@ -131,6 +159,10 @@ require get_template_directory() . '/inc/security.php';
 add_action(
 	'widgets_init',
 	function (): void {
+		if ( ! _s_feature_enabled( 'remove_widgets' ) ) {
+			return;
+		}
+
 		unregister_widget( 'WP_Widget_Archives' );
 		unregister_widget( 'WP_Widget_Calendar' );
 		unregister_widget( 'WP_Widget_Categories' );

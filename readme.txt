@@ -6,7 +6,7 @@ Tags: accessibility-ready, custom-background, custom-logo, custom-menu, featured
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.4
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 License: GNU General Public License v2 or later
 License URI: LICENSE
 
@@ -33,6 +33,15 @@ This theme is designed to work with all popular WordPress plugins. Note that inc
 Yes. The theme is tested with WordPress 7.1 "Mary Lou". The always-iframed editor is styled through editor-style.css and theme.json. Features from WordPress 7.0 "Armstrong" keep working: AI Connectors, Responsive Block Visibility, Custom CSS per block and the Font Library work out of the box with no theme configuration. theme.json provides styling for the new Breadcrumbs and Icon blocks.
 
 == Changelog ==
+
+= 3.1.1 =
+* Fixed: 404 page used widgets that the theme itself unregisters; it now renders recent posts, archives and tags directly
+* Fixed: the registered Footer menu is now displayed in the footer
+* Fixed: ?author= redirect only applies to numeric values, so plugins can use the parameter
+* Added: `_s_features` filter to switch off comments, widget removal, frontend heartbeat and Dashicons removal
+* Added: responsive rules for galleries and the navigation, which previously had none
+* Added return types to the Customizer partial callbacks
+* composer.json authors now point to this repository
 
 = 3.1.0 =
 * WordPress 7.1 "Mary Lou" support
